@@ -1,0 +1,214 @@
+The .NET Micro Framework Solution Wizard will create the 'G400' solution in the directory:
+
+	C:\MicroFrameworkPK_v4_3\Solutions\G400
+
+The following is a description of the components of this solution.  Each solution consists of a set of projects which in turn have a set of features and libraries.
+
+    Solution:                          	 G400
+    Author:                            	 Dan Aizenstros
+    Description:                       	 G400 port
+    Processor:                         	 AT91SAM9X35
+    Debugger Port:                     	 USB1
+
+
+Project Tinybooter
+    Description:                       	 
+    Path:                              	 Solutions\G400\TinyBooter
+
+Libraries:
+    TinybooterLib:                     	 TinyBooter core library
+    Crypto:                            	 Cryptography library
+    GlobalLock_hal:                    	 Global lock (native threading control)
+    TinyHal_loader:                    	 Core HAL library (for boot loaders)
+    TinyHal:                           	 Core HAL library
+    ARM9_bootstrap:                    	 ARM9 core bootstrap
+    backlight_hal_stubs:               	 Backlight HAL stub library
+    batterycharger_hal_stubs:          	 Battery charger stub library
+    batterymeasurement_hal_stubs:      	 Battery measurement stub library
+    Display_Font8x15:                  	 Text Font (8x15 pixels)
+    cpu_ebiu_stubs:                    	 EBIU stub library
+    cpu_prestackinit_stubs:            	 Pre stack initialization stub driver
+    cpu_spi_stubs:                     	 SPI stub library
+    cpu_watchdog_stubs:                	 Watchdog driver
+    system_initialization_hal_loader:  	 System initialization (for boot loaders)
+    asyncproccall_pal:                 	 Asynchronous procedure call library
+    blockstorage_pal:                  	 Block storage library
+    Watchdog_pal_stubs:                	 Watchdog stub
+    Buttons_pal:                       	 Buttons library
+    COM_pal:                           	 Communication port director
+    DebuggerPort_SSL_Config_stubs:     	 DebuggerPort SSL Config stub
+    i2c_pal_stubs:                     	 I2C stub library
+    sockets_pal_stubs:                 	 Network socket stub driver
+    usart_pal:                         	 USART driver
+    usart_pal_stubs:                   	 USART stub driver
+    usb_pal:                           	 USB driver
+    config_pal_loader:                 	 System configuration boot loader library
+    diagnostics_pal:                   	 Diagnostics library
+    events_pal:                        	 System event library
+    fs_pal_stubs:                      	 File System stub library
+    Ink_pal_stubs:                     	 Ink set of methods used by Ink, Ink
+    Time_pal:                          	 Time set of methods used by Time, Time
+    Gesture_pal_stubs:                 	 Gesture set of methods used by Gesture, Ink
+    palevent_pal_stubs:                	 palevent set of methods used by Gesture, Ink
+    heap_pal:                          	 Managed heap size and location configuration
+    piezo_pal_stubs:                   	 Piezo stub driver
+    SimpleHeap:                        	 SimpleHeap unmanaged heap
+    SimpleHeap_config:                 	 Simple unmanaged heap
+    tinycrt_pal_loader:                	 CRT functionality (for boot loaders)
+    AT91_AIC:                          	 Atmel AT91 interrupt controller driver
+    SAM9_Bootstrap:                    	 Atmel AT91 SAM9 bootstrap driver
+    AT91_Cache:                        	 Atmel SAM9261 cache driver
+    AT91_GPIO:                         	 Atmel AT91 general purpose input-output (GPIO) driver
+    AT91_SAM:                          	 Atmel processor power driver
+    AT91_TIMER:                        	 Atmel AT91 timer driver
+    AT91_TIME:                         	 Atmel AT91 time driver
+    AT91_USART:                        	 Atmel AT91 USART driver
+    cpu_usart_stubs:                   	 USART stub library
+    AT91_USB:                          	 Atmel AT91 USB driver
+    CRC:                               	 CRC library
+    WireProtocol:                      	 Device communication protocol
+    FS_Config_stubs:                   	 File system config stub
+    TimeService_pal_stubs:             	 TimeService set of methods used by TimeService, TimeService
+    ARM9_mmu:                          	 ARM9 MMU core driver
+    K9F2G08_BL:                        	 
+    usb_pal_config_AT91SAM9:           	 USB PAL configuration for Atmel SAM926_EK
+    K9F2G08_BL_Config:                 	 
+    AT91_SAM_Init:                     	 Atmel AT91 initialization code
+    cpu_analog_stubs:                  	 Analog stub library
+    PWM_HAL_G400:                  	 Generates template code in your solution's DeviceCode directory for the given Library Category.The project will be generated in Solutions\G400\DeviceCode\PWM_HAL
+    Analog_DA_HAL_G400:            	 Generates template code in your solution's DeviceCode directory for the given Library Category.The project will be generated in Solutions\G400\DeviceCode\Analog_DA_HAL
+    BlockStorage_AddDevices_G400:  	 Block storage add device driver for G400
+    native_double_pal:                 	 Doubles Native PAL library
+
+
+Project tinyclr
+    Description:                       	 
+    Path:                              	 Solutions\G400\TinyCLR
+
+Features:
+    Core:                              	 Core functionality (required)
+    Hardware:                          	 Core hardware component
+    NativeEventDispatcher:             	 Native event dispatching for interop
+    SPI:                               	 SPI support
+    InterruptHandler:                  	 Support for interrupt handling
+    USB:                               	 Usb Transport
+    UsbClient:                         	 Usb client component
+    Serialization:                     	 Data serialization support
+    Stream:                            	 Stream component
+    Serial:                            	 Serial transport
+    SerialPort:                        	 Serial port component
+    Diagnostics:                       	 Diagnostic utilities
+    XML:                               	 Xml utilities component
+    Debugger:                          	 Visual Studio debugger support
+    MFUpdate:                          	 Micro Framework update utilities
+    Crypto:                            	 Cryptographic functionality
+    I2C:                               	 I2C Support
+    PWM:                               	 PWM component
+
+Libraries:
+    OpenSSL_PKCS11_Crypto:             	 PKCS11 OpenSSL Crypto
+    PKCS11_Engine:                     	 PKCS11 Engine
+    crypto_openssl:                    	 Crypto Library from OpenSSL
+    SPOT_Update:                       	 Common interop library
+    MFUpdate_PAL:                      	 MFUpdate_PAL
+    MicroBooterUpdate:                 	 MicroBooter update provider
+    FSUpdateStorage:                   	 Update Storage driver using the File System
+    UpdateValidationX509:              	 Update Validation driver for X509
+    ssl_pal_stubs:                     	 SSL PAL layer stub library
+    LargeBuffer_hal_stubs:             	 LargeBuffer stub library
+    Core:                              	 CLR core library
+    Hardware:                          	 Core hardware functionality
+    InterruptHandler:                  	 Interrupt handler library
+    IOPort:                            	 Native event dispatcher (formerly IOPort)
+    Serialization:                     	 Binary serialization (proprietary format)
+    Stream:                            	 Generic stream functionality
+    Xml:                               	 Native Xml functionality
+    Debugger:                          	 Visual Studio debugging support
+    Debugger_full:                     	 Full Visual Studio debugging support
+    Debugger_minimal:                  	 Minimal debug API methods
+    Diagnostics:                       	 Diagnostic functionality
+    Diagnostics_stub:                  	 Diagnostics stub library
+    CorLib:                            	 Subset of mscorlib
+    SPOT:                              	 Common interop library
+    SPOT_Serialization:                	 Serialization interop library
+    SPOT_Hardware:                     	 Hardware interop library
+    SPOT_Hardware_SerialPort:          	 SerialPort interop library
+    SPOT_Hardware_Usb:                 	 
+    SPOT_IO:                           	 Stream interop library
+    System_Xml:                        	 Xml interop library
+    Messaging:                         	 Core communication component
+    CLRStartup:                        	 Common CLR initialization library
+    Crypto_stub:                       	 Crypto stub library
+    GlobalLock_hal:                    	 Global lock (native threading control)
+    TinyHal:                           	 Core HAL library
+    cpu_prestackinit_stubs:            	 Pre stack initialization stub driver
+    ARM9_bootstrap:                    	 ARM9 core bootstrap
+    backlight_hal_stubs:               	 Backlight HAL stub library
+    batterycharger_hal_stubs:          	 Battery charger stub library
+    batterymeasurement_hal_stubs:      	 Battery measurement stub library
+    cpu_ebiu_stubs:                    	 EBIU stub library
+    cpu_watchdog_stubs:                	 Watchdog driver
+    system_initialization_hal:         	 System initialization library
+    asyncproccall_pal:                 	 Asynchronous procedure call library
+    Watchdog_pal_stubs:                	 Watchdog stub
+    Buttons_pal:                       	 Buttons library
+    COM_pal:                           	 Communication port director
+    DebuggerPort_SSL_Config_stubs:     	 DebuggerPort SSL Config stub
+    sockets_pal_stubs:                 	 Network socket stub driver
+    usart_pal:                         	 USART driver
+    usb_pal:                           	 USB driver
+    usb_pal_config_AT91SAM9:           	 USB PAL configuration for Atmel SAM926_EK
+    config_pal:                        	 System configuration
+    diagnostics_pal:                   	 Diagnostics library
+    events_pal:                        	 System event library
+    palevent_pal:                      	 palevent set of methods used by Gesture, Ink
+    Time_pal:                          	 Time set of methods used by Time, Time
+    heap_pal:                          	 Managed heap size and location configuration
+    piezo_pal_stubs:                   	 Piezo stub driver
+    SimpleHeap:                        	 SimpleHeap unmanaged heap
+    SimpleHeap_config:                 	 Simple unmanaged heap
+    tinycrt_pal:                       	 CRT functionality
+    AT91_AIC:                          	 Atmel AT91 interrupt controller driver
+    SAM9_Bootstrap:                    	 Atmel AT91 SAM9 bootstrap driver
+    AT91_Cache:                        	 Atmel SAM9261 cache driver
+    AT91_GPIO:                         	 Atmel AT91 general purpose input-output (GPIO) driver
+    AT91_SAM:                          	 Atmel processor power driver
+    AT91_SPI:                          	 Atmel AT91 SPI driver
+    AT91_TIMER:                        	 Atmel AT91 timer driver
+    AT91_TIME:                         	 Atmel AT91 time driver
+    AT91_USART:                        	 Atmel AT91 USART driver
+    AT91_USB:                          	 Atmel AT91 USB driver
+    AT91_SAM_Init:                     	 Atmel AT91 initialization code
+    CRC:                               	 CRC library
+    WireProtocol:                      	 Device communication protocol
+    TimeService_pal_stubs:             	 TimeService set of methods used by TimeService, TimeService
+    SPOT_Messaging_stub:               	 Messaging interop stub library
+    RPC_stub:                          	 Remote procedure call stub library
+    ARM9_mmu:                          	 ARM9 MMU core driver
+    cpu_performancecounter_stubs:      	 Performance counter stub library
+    cpu_analog_stubs:                  	 Analog stub library
+    SecurityPkcs11:                    	 PKCS11
+    Graphics_stub:                     	 Graphics stub library
+    Gesture_pal_stubs:                 	 Gesture set of methods used by Gesture, Ink
+    I2C:                               	 I2C support
+    i2c_pal:                           	 I2C drivers
+    SPOT_Hardware_PWM:                 	 PWM interop library
+    lcd_hal_stubs:                     	 Stub display driver
+    cpu_LCD_stubs:                     	 Display controller stub library
+    HeapPersistence_stub:              	 Heap persistence stub library
+    BlockStorage_AddDevices_stubs:     	 Block storage add device stub driver
+    Ink_pal_stubs:                     	 Ink set of methods used by Ink, Ink
+    blockstorage_pal_stubs:            	 Block storage stub library
+    fs_pal_stubs:                      	 File System stub library
+    AT91_I2C:                          	 Atmel AT91 I2C driver
+    FS_Config_stubs:                   	 File system config stub
+    PWM_HAL_G400:                  	 Generates template code in your solution's DeviceCode directory for the given Library Category.The project will be generated in Solutions\G400\DeviceCode\PWM_HAL
+    PKCS11_Storage_PAL_G400:       	 Generates template code in your solution's DeviceCode directory for the given Library Category.The project will be generated in Solutions\G400\DeviceCode\PKCS11_Storage_PAL
+    MFUpdate_Config_PAL_G400:      	 Generates template code in your solution's DeviceCode directory for the given Library Category.The project will be generated in Solutions\G400\DeviceCode\MFUpdate_Config_PAL
+    CryptoConfig_G400:             	 Generates template code in your solution's DeviceCode directory for the given Library Category.The project will be generated in Solutions\G400\DeviceCode\CryptoConfig
+    Analog_DA_HAL_G400:            	 Generates template code in your solution's DeviceCode directory for the given Library Category.The project will be generated in Solutions\G400\DeviceCode\Analog_DA_HAL
+    MFUpdate_validation_G400:      	 MFUpdate validation mechanism for G400
+    Crypto_config_G400:            	 PKCS11 Crypto configuration for G400
+    MFUpdate_G400:                 	 MFUpdate package for G400
+    VirtualKey_G400:               	 Virtual key driver for G400
+    native_double_pal:                 	 Doubles Native PAL library

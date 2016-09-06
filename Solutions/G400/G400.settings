@@ -1,0 +1,17 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" DefaultTargets="Build">
+  <PropertyGroup>
+    <Author>Dan Aizenstros</Author>
+    <Description>G400 port</Description>
+    <Documentation />
+    <PlatformGuid>{2e8523b0-d1ad-468d-bbb1-63e36aa1c398}</PlatformGuid>
+    <TARGETPLATFORM>G400</TARGETPLATFORM>
+    <PLATFORM>G400</PLATFORM>
+    <IsSolutionWizardVisible>True</IsSolutionWizardVisible>
+    <ENDIANNESS>le</ENDIANNESS>
+  </PropertyGroup>
+  <ItemGroup>
+    <IncludePaths Include="Solutions\G400" />
+  </ItemGroup>
+  <Import Project="$(SPOCLIENT)\devicecode\Targets\Native\AT91\AT91SAM9X35.settings" />
+</Project>
