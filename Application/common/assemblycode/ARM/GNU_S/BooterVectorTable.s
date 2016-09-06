@@ -15,11 +15,18 @@
 
     .else
 
+    .ifdef PLATFORM_ARM_AT91SAM9X35
+    .extern  EntryPoint
+    .global ARM_Vectors
+
+    .else
+
     .extern  EntryPoint
     .extern  UNDEF_SubHandler
     .extern  ABORTP_SubHandler
     .extern  ABORTD_SubHandler
 
+     .endif
      .endif
     
 	  .arm
@@ -97,6 +104,41 @@ irq_vct:
 
 	.else
 
+   	.ifdef PLATFORM_ARM_AT91SAM9X35
+
+RESET_VECTOR:
+    ldr      pc, reset_vct
+
+UNDEF_VECTOR:
+    b       UNDEF_VECTOR
+
+SWI_VECTOR:
+    b       SWI_VECTOR
+
+PREFETCH_VECTOR:
+    b       PREFETCH_VECTOR
+
+DATA_VECTOR:
+    b       DATA_VECTOR
+
+USED_VECTOR:
+    b       USED_VECTOR
+
+IRQ_VECTOR:
+    ldr    pc, irq_vct
+
+FIQ_VECTOR:
+    b       FIQ_VECTOR
+
+reset_vct:
+    .word    EntryPoint
+irq_vct:
+    .word    0xbaadf00d
+
+;;;;;;;;
+
+	.else
+
     @ RESET
     b       VectorAreaSkip
 
@@ -137,6 +179,7 @@ VectorAreaSkip:
 	  b		EntryPoint
 
 
+    .endif @@@ .ifdef PLATFORM_ARM_AT91SAMX35
     .endif @@@ .ifdef PLATFORM_ARM_AT91SAM9261 || PLATFORM_ARM_AT91SAM9RL64
 
 

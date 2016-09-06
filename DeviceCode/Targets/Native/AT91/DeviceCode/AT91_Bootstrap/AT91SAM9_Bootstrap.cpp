@@ -5,7 +5,11 @@
 #include <tinyhal.h>
 #include <Cores\arm\Include\cpu.h>
 
+#if defined(PLATFORM_ARM_SAM9X35_ANY)
+static const UINT32  c_Bootstrap_Register_Begin =   0xF0000000;
+#else
 static const UINT32  c_Bootstrap_Register_Begin =   0xFFF00000;
+#endif
 static const UINT32  c_Bootstrap_Register_End   =   0xFFFFFFFF;
 static const UINT32  c_Bootstrap_SDRAM_Begin    =   SDRAM_MEMORY_Base;
 static const UINT32  c_Bootstrap_SDRAM_End      =   SDRAM_MEMORY_Base + SDRAM_MEMORY_Size - ARM9_MMU::c_TTB_size;
@@ -152,7 +156,7 @@ void BootstrapCode_MMU()
         FALSE,                                                  // Buffered
         FALSE);                                                 // Extended
 
-#ifdef PLATFORM_ARM_SAM9RL64_ANY
+#if defined(PLATFORM_ARM_SAM9RL64_ANY) || defined(PLATFORM_ARM_SAM9X35_ANY)
 
 		// Direct map for the USBHS buffer registers(0x00600000~0x006FFFFF)
     	ARM9_MMU::GenerateL1_Sections( 
@@ -202,7 +206,7 @@ void BootstrapCode_MMU()
 void BootstrapCode ()
 {
 
-#ifdef PLATFORM_ARM_SAM9RL64_ANY
+#if defined(PLATFORM_ARM_SAM9RL64_ANY) || defined(PLATFORM_ARM_SAM9X35_ANY)
 	//disable watchdog timer
 	
 	AT91_WATCHDOG& g_WDT = AT91::WTDG();

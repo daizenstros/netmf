@@ -14,7 +14,7 @@
 
 void __section(SectionForFlashOperations) AT91_SAM_Driver::Sleep(void)
 {
-#if defined(PLATFORM_ARM_SAM9261_ANY) || defined(PLATFORM_ARM_SAM9RL64_ANY)
+#if defined(PLATFORM_ARM_SAM9261_ANY) || defined(PLATFORM_ARM_SAM9RL64_ANY) || defined(PLATFORM_ARM_SAM9X35_ANY)
     UINT32 reg = 0;
 
     // ARM926EJ-S Wait For Interrupt
@@ -47,6 +47,17 @@ BOOL AT91_SAM_Driver::Initialize()
 {
     CPU_INTC_Initialize();
     CPU_GPIO_Initialize();
+
+	if( CPU_GPIO_EnableInputPin(AT91_GPIO_Driver::PA25, FALSE, NULL, GPIO_INT_NONE, RESISTOR_PULLUP))
+	{
+		HAL_Time_Sleep_MicroSeconds_InterruptEnabled(10 * 1000); // wait for buttons to init
+
+		if(!CPU_GPIO_GetPinState(AT91_GPIO_Driver::PA25))
+		{
+			HalSystemConfig.DebuggerPorts[0] = HalSystemConfig.MessagingPorts[0] = HalSystemConfig.DebugTextPort = HalSystemConfig.stdio = COM1;
+		}
+	}
+
     return TRUE;
 }
 
@@ -57,7 +68,7 @@ void AT91_SAM_Driver::Halt(void)
 }
 void AT91_SAM_Driver::Reset(void)     
 {
-#if defined(PLATFORM_ARM_SAM9261_ANY) || defined(PLATFORM_ARM_SAM7X_ANY) || defined(PLATFORM_ARM_SAM9RL64_ANY) || defined(PLATFORM_ARM_SAM7S_ANY)
+#if defined(PLATFORM_ARM_SAM9261_ANY) || defined(PLATFORM_ARM_SAM7X_ANY) || defined(PLATFORM_ARM_SAM9RL64_ANY) || defined(PLATFORM_ARM_SAM7S_ANY) || defined(PLATFORM_ARM_SAM9X35_ANY)
 
     volatile UINT32 *pReset     = (volatile UINT32*)AT91C_BASE_RSTC;
     volatile UINT32 *pResetMode = (volatile UINT32*)AT91C_BASE_RSTC_MR;
@@ -74,7 +85,7 @@ void AT91_SAM_Driver::Pause(void)
 }
 void AT91_SAM_Driver::Shutdown(void)  
 {
-#if defined(PLATFORM_ARM_SAM9261_ANY) || defined(PLATFORM_ARM_SAM9RL64_ANY)
+#if defined(PLATFORM_ARM_SAM9261_ANY) || defined(PLATFORM_ARM_SAM9RL64_ANY) || defined(PLATFORM_ARM_SAM9X35_ANY)
     volatile UINT32 *pShutdown = (volatile UINT32*)AT91C_BASE_SHDWC;
 
     *pShutdown = (AT91C_SHDWC__SHUTDOWN_KEY | AT91C_SHDWC__SHDW);

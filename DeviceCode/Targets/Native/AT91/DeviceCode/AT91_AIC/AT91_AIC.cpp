@@ -52,6 +52,41 @@ AT91_AIC_Driver::IRQ_VECTORING AT91_AIC_Driver::s_IsrTable[] =
     DEFINE_IRQ(30,  0),     
     DEFINE_IRQ(31,  0),      // Advanced Interrupt Controller       
 
+#elif defined(PLATFORM_ARM_SAM9X35_ANY)
+
+    DEFINE_IRQ(0,   7),      // Advanced Interrupt Controller
+    DEFINE_IRQ(1,   7),      // System Peripherals
+    DEFINE_IRQ(2,   1),      // Parallel IO Controller A, B
+    DEFINE_IRQ(3,   1),      // Parallel IO Controller C, D
+    DEFINE_IRQ(4,   1),      // Soft Modem Device
+    DEFINE_IRQ(5,   5),      // USART 0
+    DEFINE_IRQ(6,   5),      // USART 1
+    DEFINE_IRQ(7,   5),      // USART 2
+    DEFINE_IRQ(8,   5),      //
+    DEFINE_IRQ(9,   6),      // Two-Wire Interface 0
+    DEFINE_IRQ(10,  6),      // Two-Wire Interface 1
+    DEFINE_IRQ(11,  6),      // Two-Wire Interface 2
+    DEFINE_IRQ(12,  0),      // High Multimedia Card Interface 0
+    DEFINE_IRQ(13,  5),      // Serial Peripheral Interface 0
+    DEFINE_IRQ(14,  5),      // Serial Peripheral Interface 1
+    DEFINE_IRQ(15,  5),      // UART 0
+    DEFINE_IRQ(16,  5),      // UART 1
+    DEFINE_IRQ(17,  6),      // Timer Counter 0 - 5
+    DEFINE_IRQ(18,  0),      // PWMC
+    DEFINE_IRQ(19,  5),      // TSADCC
+    DEFINE_IRQ(20,  6),      // DMAC 0
+    DEFINE_IRQ(21,  6),      // DMAC 1
+    DEFINE_IRQ(22,  6),      //
+    DEFINE_IRQ(23,  6),      // High Speed USB
+    DEFINE_IRQ(24,  4),      // Ethernet MAC
+    DEFINE_IRQ(25,  3),      // LCDC
+    DEFINE_IRQ(26,  0),      // High Multimedia Card Interface 1
+    DEFINE_IRQ(27,  0),      //
+    DEFINE_IRQ(28,  4),      // Serial Synchronous Controller
+    DEFINE_IRQ(29,  0),      // Controller Aera Network Controller 0
+    DEFINE_IRQ(30,  0),      // Controller Aera Network Controller 1
+    DEFINE_IRQ(31,  0),      // Advanced Interrupt Controller
+
 #elif defined(PLATFORM_ARM_SAM9261_ANY)
     DEFINE_IRQ(0,   7),      // Advanced Interrupt Controller
     DEFINE_IRQ(1,   7),      // System Peripherals

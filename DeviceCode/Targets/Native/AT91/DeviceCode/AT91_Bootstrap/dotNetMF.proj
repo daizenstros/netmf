@@ -10,7 +10,7 @@
   <ItemGroup Condition="'$(TARGETPROCESSOR)'=='AT91SAM7X'">
     <RequiredProjects Include="dotNetMF_SAM7X.proj" />
   </ItemGroup>
-  <ItemGroup Condition="'$(TARGETPROCESSOR)'=='AT91SAM9261' or '$(TARGETPROCESSOR)'=='AT91SAM9RL64'">
+  <ItemGroup Condition="'$(TARGETPROCESSOR)'=='AT91SAM9261' or '$(TARGETPROCESSOR)'=='AT91SAM9RL64' or '$(TARGETPROCESSOR)'=='AT91SAM9X35'">">
     <RequiredProjects Include="dotNetMF_SAM9.proj" />
   </ItemGroup>
   <ItemGroup>

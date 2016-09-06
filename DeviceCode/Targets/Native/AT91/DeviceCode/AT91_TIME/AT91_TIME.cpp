@@ -37,7 +37,11 @@ BOOL AT91_TIME_Driver::Initialize()
     g_AT91_TIME_Driver.m_lastRead    = 0;
     g_AT91_TIME_Driver.m_nextCompare = (UINT64) AT91_TIMER_Driver::c_MaxTimerValue;
 
+#if defined(PLATFORM_ARM_SAM9X35_ANY)
+    if(!AT91_TIMER_Driver::Initialize( AT91_TIMER_Driver::c_SystemTimer, TRUE, AT91_TC::TC_CLKS_TIMER_DIV3_CLOCK, AT91_TIME_Driver::ISR, NULL ))
+#else
     if(!AT91_TIMER_Driver::Initialize( AT91_TIMER_Driver::c_SystemTimer, TRUE, AT91_TC::TC_CLKS_TIMER_DIV5_CLOCK, AT91_TIME_Driver::ISR, NULL ))
+#endif
         return FALSE;
 
     AT91_TIMER_Driver::SetCompare( AT91_TIMER_Driver::c_SystemTimer, AT91_TIMER_Driver::c_MaxTimerValue );
@@ -57,6 +61,16 @@ UINT64 AT91_TIME_Driver::CounterValue()
 {
     GLOBAL_LOCK(irq);
 
+#if defined(PLATFORM_ARM_SAM9X35_ANY)
+    UINT32 value = AT91_TIMER_Driver::ReadCounter( AT91_TIMER_Driver::c_SystemTimer );
+
+    g_AT91_TIME_Driver.m_lastRead &= (0xFFFFFFFF00000000ull);
+
+    if(AT91_TIMER_Driver::DidTimerOverFlow( AT91_TIMER_Driver::c_SystemTimer ))
+    {
+        g_AT91_TIME_Driver.m_lastRead += (0x1ull << 32);
+    }
+#else
     UINT16 value = AT91_TIMER_Driver::ReadCounter( AT91_TIMER_Driver::c_SystemTimer );
 
     g_AT91_TIME_Driver.m_lastRead &= (0xFFFFFFFFFFFF0000ull);
@@ -65,6 +79,7 @@ UINT64 AT91_TIME_Driver::CounterValue()
     {
         g_AT91_TIME_Driver.m_lastRead += (0x1ull << 16);
     }
+#endif
 
     g_AT91_TIME_Driver.m_lastRead |= value;
 
@@ -98,8 +113,13 @@ void AT91_TIME_Driver::SetCompareValue( UINT64 CompareValue )
             diff = (UINT32)(CompareValue - CntrValue);
         }        
 
+#if defined(PLATFORM_ARM_SAM9X35_ANY)
+        AT91_TIMER_Driver::SetCompare( AT91_TIMER_Driver::c_SystemTimer, 
+            (AT91_TIMER_Driver::ReadCounter( AT91_TIMER_Driver::c_SystemTimer ) + diff) );
+#else
         AT91_TIMER_Driver::SetCompare( AT91_TIMER_Driver::c_SystemTimer, 
             (UINT16)(AT91_TIMER_Driver::ReadCounter( AT91_TIMER_Driver::c_SystemTimer ) + diff) );
+#endif
 
         if(CounterValue() > CompareValue)
         {
@@ -115,6 +135,7 @@ void AT91_TIME_Driver::SetCompareValue( UINT64 CompareValue )
 }
 
 //--//
+extern HAL_DblLinkedList<HAL_CONTINUATION> g_HAL_Completion_List;
 
 void AT91_TIME_Driver::ISR( void* Param )
 {
@@ -183,7 +204,7 @@ void __section(SectionForFlashOperations) AT91_TIME_Driver::Sleep_uSec_Loop( UIN
 {
     // iterations must be signed so that negative iterations will result in the minimum delay
 
-    uSec *= (SYSTEM_CYCLE_CLOCK_HZ / CLOCK_COMMON_FACTOR);
+    uSec *= ((SYSTEM_CYCLE_CLOCK_HZ / 2) / CLOCK_COMMON_FACTOR);
     uSec /= (ONE_MHZ               / CLOCK_COMMON_FACTOR);
 
     // iterations is equal to the number of CPU instruction cycles in the required time minus

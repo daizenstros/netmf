@@ -18,7 +18,7 @@
     <IgnoreDefaultLibPath>False</IgnoreDefaultLibPath>
     <IsStub>False</IsStub>
     <HasLibraryCategory>False</HasLibraryCategory>
-    <CustomFilter>AT91;AT91SAM7X;AT91SAM9261;AT91SAM9RL64</CustomFilter>
+    <CustomFilter>AT91;AT91SAM7X;AT91SAM9261;AT91SAM9RL64;AT91SAM9X35</CustomFilter>
     <IsSolutionWizardVisible>True</IsSolutionWizardVisible>
     <Directory>DeviceCode\Targets\Native\AT91\DeviceCode\AT91_TIMER</Directory>
     <PlatformIndependentBuild>false</PlatformIndependentBuild>

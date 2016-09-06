@@ -242,6 +242,17 @@ BOOL AT91_GPIO_Driver::Initialize()
     }
 #endif
 
+#if defined(PLATFORM_ARM_SAM9X35_ANY)
+    // register interrupt handler for all ports
+    if(!CPU_INTC_ActivateInterrupt( AT91C_ID_PIOAB, ISR, (void*)(size_t)0 )) return FALSE;
+    if(!CPU_INTC_ActivateInterrupt( AT91C_ID_PIOCD, ISR, (void*)(size_t)2 )) return FALSE;
+
+    // TODO: will be replaced by PMC API
+
+    AT91_PMC &pmc = AT91::PMC();
+    pmc.EnablePeriphClock(AT91C_ID_PIOAB);
+    pmc.EnablePeriphClock(AT91C_ID_PIOCD);
+#else
     // register interrupt handler for all ports
     if(!CPU_INTC_ActivateInterrupt( AT91C_ID_PIOA, ISR, (void*)(size_t)0 )) return FALSE;
 #if (AT91_MAX_GPIO > 32)
@@ -272,6 +283,7 @@ BOOL AT91_GPIO_Driver::Initialize()
 
 #if  (AT91_MAX_GPIO > 96)
     pmc.EnablePeriphClock(AT91C_ID_PIOD);
+#endif
 #endif
 
     return TRUE;
@@ -306,6 +318,16 @@ BOOL AT91_GPIO_Driver::Uninitialize()
         }
     }
 
+#if defined(PLATFORM_ARM_SAM9X35_ANY)
+    if(!CPU_INTC_DeactivateInterrupt( AT91C_ID_PIOAB )) return FALSE;
+    if(!CPU_INTC_DeactivateInterrupt( AT91C_ID_PIOCD )) return FALSE;
+
+    // TODO: will be replaced by PMC API
+
+    AT91_PMC &PMC = AT91::PMC();
+    PMC.DisablePeriphClock(AT91C_ID_PIOAB);
+    PMC.DisablePeriphClock(AT91C_ID_PIOCD);
+#else
     if(!CPU_INTC_DeactivateInterrupt( AT91C_ID_PIOA )) return FALSE;
 #if (AT91_MAX_GPIO > 32)
     if(!CPU_INTC_DeactivateInterrupt( AT91C_ID_PIOB )) return FALSE;
@@ -326,7 +348,7 @@ BOOL AT91_GPIO_Driver::Uninitialize()
 #if (AT91_MAX_GPIO > 64)
     PMC.DisablePeriphClock(AT91C_ID_PIOC);
 #endif
-
+#endif
     return TRUE;
 }
 
@@ -366,13 +388,23 @@ void AT91_GPIO_Driver::DisablePin( GPIO_PIN pin, GPIO_RESISTOR resistorState, UI
     {
         case GPIO_ALT_MODE_1:               // Enable Peripheral A function
             pioX.PIO_PDR = bitmask;   
+#if defined(PLATFORM_ARM_SAM9X35_ANY)
+            pioX.PIO_ASR &= ~bitmask;
+            pioX.PIO_BSR &= ~bitmask;
+#else
             pioX.PIO_ASR = bitmask;
+#endif
             break;
 
             
         case GPIO_ALT_MODE_2:               // Enable Peripheral B function
             pioX.PIO_PDR = bitmask;   
+#if defined(PLATFORM_ARM_SAM9X35_ANY)
+            pioX.PIO_ASR |= bitmask;
+            pioX.PIO_BSR &= ~bitmask;
+#else
             pioX.PIO_BSR = bitmask;
+#endif
             break;
             
         default:        
@@ -571,6 +603,11 @@ void AT91_GPIO_Driver::ISR( void* Param )
     
     UINT32  port = (UINT32)Param;
     
+#if defined(PLATFORM_ARM_SAM9X35_ANY)
+    UINT32 final_port = port + 1;
+    for (; port <= final_port; port++) {
+#endif
+
     AT91_PIO &pioX = AT91::PIO (port);    
     
     // fire off each change, one at a time
@@ -578,6 +615,7 @@ void AT91_GPIO_Driver::ISR( void* Param )
     UINT32 bitIndex = 0;
 
     UINT32 interruptsActive = pioX.PIO_ISR;
+    interruptsActive &= pioX.PIO_IMR;
     
     while(interruptsActive)
     {
@@ -655,6 +693,10 @@ void AT91_GPIO_Driver::ISR( void* Param )
         // remove the pin from the local check
         interruptsActive ^= bitMask;
     } 
+
+#if defined(PLATFORM_ARM_SAM9X35_ANY)
+    }
+#endif
 }
 
 //--//

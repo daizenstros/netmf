@@ -82,9 +82,16 @@ swi_vect:
 swi_vect:
     b   swi_vect
 
+    .else 
+
+     .ifdef PLATFORM_ARM_AT91SAM9X35
+swi_vect:
+    b   swi_vect
+
     .else
     .word   0xbaadf00d
     .endif   
+    .endif
     .endif
     
     @ PREFETCH ABORT
@@ -105,8 +112,14 @@ fiq_vect:
 fiq_vect:
     b   fiq_vect
     .else
+
+    .ifdef PLATFORM_ARM_AT91SAM9X35
+fiq_vect:
+    b   fiq_vect
+    .else
     .word   0xbaadf00d
     .endif  
+    .endif
     .endif
 UNDEF_SubHandler_Trampoline:
     .word   UNDEF_SubHandler
@@ -154,6 +167,14 @@ VectorAreaSkip:
     ldr	r1, =IRQ_Handler
     str	r1, [r0, #0]
 	.endif @@@@[IF TargetPlatformProcessor = "PLATFORM_ARM_AT91SAM9261"]
+
+	@@ move the IRQ vector to offset 0x24 in SRAM
+	.ifdef PLATFORM_ARM_AT91SAM9X35
+	
+    mov	r0, #0x24
+    ldr	r1, =IRQ_Handler
+    str	r1, [r0, #0]
+	.endif @@@@[IF TargetPlatformProcessor = "PLATFORM_ARM_AT91SAM9X35"]
 
 
     @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@

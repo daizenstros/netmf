@@ -27,7 +27,11 @@
 #include "AT91_SAM/AT91_SAM9RL64.h"
 #endif
 
-#if defined(PLATFORM_ARM_SAM9RL64_ANY)
+#if defined(PLATFORM_ARM_SAM9X35_ANY)
+#include "AT91_SAM/AT91_SAM9X35.h"
+#endif
+
+#if defined(PLATFORM_ARM_SAM9RL64_ANY) || defined(PLATFORM_ARM_SAM9X35_ANY)
 struct AT91_PMC {
     static const UINT32 c_Base = AT91C_BASE_PMC;
 
@@ -37,7 +41,7 @@ struct AT91_PMC {
 
     /****/ volatile UINT32 PMC_SCSR;                // System Clock Status Register
 
-    /****/ volatile UINT32 Reserved0[1];            // 
+    /****/ volatile UINT32 Reserved0[1];            //
 
     /****/ volatile UINT32 PMC_PCER;                // Peripheral Clock Enable Register
 
@@ -51,6 +55,11 @@ struct AT91_PMC {
     static const    UINT32 CKGR_MOSCEN     = (0x1 << 0);       // (CKGR) Main Oscillator Enable
     static const    UINT32 CKGR_OSCBYPASS  = (0x1 << 1);       // (CKGR) Main Oscillator Bypass
     static const    UINT32 CKGR_OSCOUNT    = (0xFF << 8);      // (CKGR) Main Oscillator Start-up Time
+#if defined(PLATFORM_ARM_SAM9X35_ANY)
+    static const    UINT32 CKGR_MOSCRCEN   = (0x1 <<  3);      // (CKGR) Main Oscillator 12 MHz RC Enable
+    static const    UINT32 CKGR_KEY        = (0x37 << 16);     // (CKGR) Main Oscillator Key for register writes
+    static const    UINT32 CKGR_MOSCSEL    = (0x1 << 24);      // (CKGR) Main Oscillator Selection
+#endif
 
 
     /****/ volatile UINT32 PMC_CKGR_MCFR;  // Main Clock  Frequency Register
@@ -92,12 +101,27 @@ struct AT91_PMC {
     static const    UINT32 PMC_PRES_CLK_16   = (0x4 <<  2);   //  (PMC) Selected clock divided by 16
     static const    UINT32 PMC_PRES_CLK_32   = (0x5 <<  2);   //  (PMC) Selected clock divided by 32
     static const    UINT32 PMC_PRES_CLK_64   = (0x6 <<  2);   //  (PMC) Selected clock divided by 64
+#if defined(PLATFORM_ARM_SAM9X35_ANY)
+    static const    UINT32 PMC_PRES_CLK_3    = (0x7 <<  2);   //  (PMC) Selected clock divided by 3
+#endif
     static const    UINT32 PMC_MDIV          = (0x3 <<  8);   //  (PMC) Master Clock Division
     static const    UINT32 PMC_MDIV_1        = (0x0 <<  8);   //  (PMC) The master clock and the processor clock are the same
     static const    UINT32 PMC_MDIV_2        = (0x1 <<  8);   //  (PMC) The processor clock is twice as fast as the master clock
-    static const    UINT32 PMC_MDIV_3        = (0x2 <<  8);   //  (PMC) The processor clock is four times faster than the master clock
+    static const    UINT32 PMC_MDIV_4        = (0x2 <<  8);   //  (PMC) The processor clock is four times faster than the master clock
+#if defined(PLATFORM_ARM_SAM9X35_ANY)
+    static const    UINT32 PMC_MDIV_3        = (0x3 <<  8);   //  (PMC) The processor clock is three times faster than the master clock
+    static const    UINT32 PMC_PLLADIV2      = (0x1 << 12);   //  (PMC) PLLA Divisor by 2
+    static const    UINT32 PMC_PLLADIV2_NOT_DIV2 = (0x0 << 12);   //  (PMC) The PLLA clock is divided by 1
+    static const    UINT32 PMC_PLLADIV2_DIV2 = (0x1 << 12);   //  (PMC) The PLLA clock is divided by 2
 
+    /****/ volatile UINT32 Reserved3[1];  // 
+
+    /****/ volatile UINT32 PMC_USB;  // USB Clock Register
+
+    /****/ volatile UINT32 PMC_SMD;  // Soft Modem Clock Register
+#else
     /****/ volatile UINT32 Reserved3[3];  // 
+#endif
 
     /****/ volatile UINT32 PMC_PCKR[2];   // Programmable Clock Register
 
@@ -122,8 +146,21 @@ struct AT91_PMC {
     /****/ volatile UINT32 Reserved5[4]; // Reserved
 
 
+#if defined(PLATFORM_ARM_SAM9X35_ANY)
+    /****/ volatile UINT32 PMC_PLLICPR; // Charge Pump Current Register
     static const    UINT32 PMC_PLLICPR__PLLA = (0x1 <<  0);
     static const    UINT32 PMC_PLLICPR__PLLB = (0x1 << 16);
+
+    /****/ volatile UINT32 Reserved6[24]; // Reserved
+
+    /****/ volatile UINT32 PMC_WPMR;  // Write Protection Mode Register
+
+    /****/ volatile UINT32 PMC_WPSR;  // Write Protection Status Register
+
+    /****/ volatile UINT32 Reserved7[8]; // Reserved
+
+    /****/ volatile UINT32 PMC_PCR;   // Peripheral Control Register
+#endif
     
     __inline void EnableSystemClock(UINT32 clkIds)
     {
@@ -509,7 +546,7 @@ struct AT91_TC {
 //
 struct AT91_WATCHDOG
 {
-    static const UINT32 c_Base = 0xFFFFFD40;
+    static const UINT32 c_Base = AT91C_BASE_WDTC;
 
     //--//
 
@@ -1296,6 +1333,142 @@ struct AT91_MATRIX {
 
 //--//
 
+#if defined(PLATFORM_ARM_SAM9X35_ANY)
+struct AT91_MATRIX {
+     static const UINT32 c_Base = AT91C_BASE_MATRIX;
+
+    /****/ volatile UINT32 MATRIX_MCFG0;     //  Master Configuration Register
+    /****/ volatile UINT32 MATRIX_MCFG1;     //  Master Configuration Register
+    /****/ volatile UINT32 MATRIX_MCFG2;     //  Master Configuration Register
+    /****/ volatile UINT32 MATRIX_MCFG3;     //  Master Configuration Register
+    /****/ volatile UINT32 MATRIX_MCFG4;     //  Master Configuration Register
+    /****/ volatile UINT32 MATRIX_MCFG5;     //  Master Configuration Register
+    /****/ volatile UINT32 MATRIX_MCFG6;     //  Master Configuration Register
+    /****/ volatile UINT32 MATRIX_MCFG7;     //  Master Configuration Register
+    /****/ volatile UINT32 MATRIX_MCFG8;     //  Master Configuration Register
+    /****/ volatile UINT32 MATRIX_MCFG9;     //  Master Configuration Register
+    /****/ volatile UINT32 MATRIX_MCFG10;    //  Master Configuration Register
+
+    /****/ volatile UINT32 Reserved0[5];    // 
+
+    /****/ volatile UINT32 MATRIX_SCFG0;    //  Slave Configuration Register 0
+    static const    UINT32 MATRIX_SLOT_CYCLE                  = (0xFF <<  0); // (MATRIX) Maximum Number of Allowed Cycles for a Burst
+    static const    UINT32 MATRIX_DEFMSTR_TYPE                = (0x3UL << 16); // (MATRIX) Default Master Type
+    static const    UINT32  MATRIX_DEFMSTR_TYPE_NO_DEFMSTR    = (0x0UL << 16); // (MATRIX) No Default Master. At the end of current slave access, if no other master request is pending, the slave is deconnected from all masters. This results in having a one cycle latency for the first transfer of a burst.
+    static const    UINT32  MATRIX_DEFMSTR_TYPE_LAST_DEFMSTR  = (0x1UL << 16); // (MATRIX) Last Default Master. At the end of current slave access, if no other master request is pending, the slave stay connected with the last master having accessed it. This results in not having the one cycle latency when the last master re-trying access on the slave.
+    static const    UINT32  MATRIX_DEFMSTR_TYPE_FIXED_DEFMSTR = (0x2UL << 16); // (MATRIX) Fixed Default Master. At the end of current slave access, if no other master request is pending, the slave connects with fixed which number is in FIXED_DEFMSTR field. This results in not having the one cycle latency when the fixed master re-trying access on the slave.
+    static const    UINT32 MATRIX_FIXED_DEFMSTR0              = (0x7UL << 18); // (MATRIX) Fixed Index of Default Master
+    static const    UINT32  MATRIX_FIXED_DEFMSTR0_ARM926I     = (0x0UL << 18); // (MATRIX) ARM926EJ-S Instruction Master is Default Master
+    static const    UINT32  MATRIX_FIXED_DEFMSTR0_ARM926D     = (0x1UL << 18); // (MATRIX) ARM926EJ-S Data Master is Default Master
+    static const    UINT32  MATRIX_FIXED_DEFMSTR0_HPDC3       = (0x2UL << 18); // (MATRIX) HPDC3 Master is Default Master
+    static const    UINT32  MATRIX_FIXED_DEFMSTR0_LCDC        = (0x3UL << 18); // (MATRIX) LCDC Master is Default Master
+    static const    UINT32  MATRIX_FIXED_DEFMSTR0_UHP         = (0x4UL << 18); // (MATRIX) UHP Master is Default Master
+
+    /****/ volatile UINT32 MATRIX_SCFG1;    //  Slave Configuration Register 1
+    static const    UINT32 MATRIX_FIXED_DEFMSTR1              = (0x7UL << 18); // (MATRIX) Fixed Index of Default Master
+    static const    UINT32  MATRIX_FIXED_DEFMSTR1_ARM926I     = (0x0UL << 18); // (MATRIX) ARM926EJ-S Instruction Master is Default Master
+    static const    UINT32  MATRIX_FIXED_DEFMSTR1_ARM926D     = (0x1UL << 18); // (MATRIX) ARM926EJ-S Data Master is Default Master
+    static const    UINT32  MATRIX_FIXED_DEFMSTR1_HPDC3       = (0x2UL << 18); // (MATRIX) HPDC3 Master is Default Master
+    static const    UINT32  MATRIX_FIXED_DEFMSTR1_LCDC        = (0x3UL << 18); // (MATRIX) LCDC Master is Default Master
+    static const    UINT32  MATRIX_FIXED_DEFMSTR1_UHP         = (0x4UL << 18); // (MATRIX) UHP Master is Default Master
+
+    /****/ volatile UINT32 MATRIX_SCFG2;    //  Slave Configuration Register 2
+    static const    UINT32 MATRIX_FIXED_DEFMSTR2              = (0x1UL << 18); // (MATRIX) Fixed Index of Default Master
+    static const    UINT32  MATRIX_FIXED_DEFMSTR2_ARM926I     = (0x0UL << 18); // (MATRIX) ARM926EJ-S Instruction Master is Default Master
+    static const    UINT32  MATRIX_FIXED_DEFMSTR2_ARM926D     = (0x1UL << 18); // (MATRIX) ARM926EJ-S Data Master is Default Master
+
+    /****/ volatile UINT32 MATRIX_SCFG3;    //  Slave Configuration Register 3
+    static const    UINT32 MATRIX_FIXED_DEFMSTR3              = (0x7UL << 18); // (MATRIX) Fixed Index of Default Master
+    static const    UINT32  MATRIX_FIXED_DEFMSTR3_ARM926I     = (0x0UL << 18); // (MATRIX) ARM926EJ-S Instruction Master is Default Master
+    static const    UINT32  MATRIX_FIXED_DEFMSTR3_ARM926D     = (0x1UL << 18); // (MATRIX) ARM926EJ-S Data Master is Default Master
+    static const    UINT32  MATRIX_FIXED_DEFMSTR3_HPDC3       = (0x2UL << 18); // (MATRIX) HPDC3 Master is Default Master
+    static const    UINT32  MATRIX_FIXED_DEFMSTR3_LCDC        = (0x3UL << 18); // (MATRIX) LCDC Master is Default Master
+    static const    UINT32  MATRIX_FIXED_DEFMSTR3_UHP         = (0x4UL << 18); // (MATRIX) UHP Master is Default Master
+
+    /****/ volatile UINT32 MATRIX_SCFG4;    //  Slave Configuration Register 4
+    static const    UINT32 MATRIX_FIXED_DEFMSTR4              = (0x3UL << 18); // (MATRIX) Fixed Index of Default Master
+    static const    UINT32  MATRIX_FIXED_DEFMSTR4_ARM926I     = (0x0UL << 18); // (MATRIX) ARM926EJ-S Instruction Master is Default Master
+    static const    UINT32  MATRIX_FIXED_DEFMSTR4_ARM926D     = (0x1UL << 18); // (MATRIX) ARM926EJ-S Data Master is Default Master
+    static const    UINT32  MATRIX_FIXED_DEFMSTR4_HPDC3       = (0x2UL << 18); // (MATRIX) HPDC3 Master is Default Master
+
+    /****/ volatile UINT32 MATRIX_SCFG5;    //  Slave Configuration Register 5
+
+    /****/ volatile UINT32 MATRIX_SCFG6;    //  Slave Configuration Register 6
+
+    /****/ volatile UINT32 MATRIX_SCFG7;    //  Slave Configuration Register 7
+
+    /****/ volatile UINT32 MATRIX_SCFG8;    //  Slave Configuration Register 8
+
+    /****/ volatile UINT32 MATRIX_SCFG9;    //  Slave Configuration Register 9
+ 
+    /****/ volatile UINT32 Reserved1[6];    // 
+
+    /****/ volatile UINT32 MATRIX_PRAS0;    //  Priority Register A for Slave 0
+ 
+    /****/ volatile UINT32 MATRIX_PRBS0;    //  Priority Register B for Slave 0
+
+    /****/ volatile UINT32 MATRIX_PRAS1;    //  Priority Register A for Slave 1
+ 
+    /****/ volatile UINT32 MATRIX_PRBS1;    //  Priority Register B for Slave 1
+ 
+    /****/ volatile UINT32 MATRIX_PRAS2;    //  Priority Register A for Slave 2
+ 
+    /****/ volatile UINT32 MATRIX_PRBS2;    //  Priority Register B for Slave 2
+
+    /****/ volatile UINT32 MATRIX_PRAS3;    //  Priority Register A for Slave 3
+
+    /****/ volatile UINT32 MATRIX_PRBS3;    //  Priority Register B for Slave 3
+
+    /****/ volatile UINT32 MATRIX_PRAS4;    //  Priority Register A for Slave 4
+
+    /****/ volatile UINT32 MATRIX_PRBS4;    //  Priority Register B for Slave 4
+
+    /****/ volatile UINT32 MATRIX_PRAS5;    //  Priority Register A for Slave 5
+
+    /****/ volatile UINT32 MATRIX_PRBS5;    //  Priority Register B for Slave 5
+
+    /****/ volatile UINT32 MATRIX_PRAS6;    //  Priority Register A for Slave 6
+
+    /****/ volatile UINT32 MATRIX_PRBS6;    //  Priority Register B for Slave 6
+
+    /****/ volatile UINT32 MATRIX_PRAS7;    //  Priority Register A for Slave 7
+
+    /****/ volatile UINT32 MATRIX_PRBS7;    //  Priority Register B for Slave 7
+
+    /****/ volatile UINT32 MATRIX_PRAS8;    //  Priority Register A for Slave 8
+
+    /****/ volatile UINT32 MATRIX_PRBS8;    //  Priority Register B for Slave 8
+
+    /****/ volatile UINT32 MATRIX_PRAS9;    //  Priority Register A for Slave 9
+
+    /****/ volatile UINT32 MATRIX_PRBS9;    //  Priority Register B for Slave 9
+
+    /****/ volatile UINT32 Reserved2[12];
+
+    /****/ volatile UINT32 MATRIX_MRCR;     //  Master Remap Control Register
+
+    /****/ volatile UINT32 Reserved3[7];
+
+    /****/ volatile UINT32 MATRIX_EBICSA;   //  Slave 3 Special Function Register
+    static const    UINT32 MATRIX_CS1A            = (0x1 <<  1); // (MATRIX) Chip Select 1 Assignment
+    static const    UINT32  MATRIX_CS1A_SMC       = (0x0 <<  1); // (MATRIX) Chip Select 1 is assigned to the Static Memory Controller.
+    static const    UINT32  MATRIX_CS1A_SDRAMC    = (0x1 <<  1); // (MATRIX) Chip Select 1 is assigned to the SDRAM Controller.
+    static const    UINT32 MATRIX_CS3A            = (0x1 <<  3); // (MATRIX) Chip Select 3 Assignment
+    static const    UINT32  MATRIX_CS3A_SMC       = (0x0 <<  3); // (MATRIX) Chip Select 3 is only assigned to the Static Memory Controller and NCS3 behaves as defined by the SMC.
+    static const    UINT32  MATRIX_CS3A_SM        = (0x1 <<  3); // (MATRIX) Chip Select 3 is assigned to the Static Memory Controller and the SmartMedia Logic is activated.
+    static const    UINT32 MATRIX_DBPUC           = (0x1 <<  8); // (MATRIX) Data Bus Pull-up Configuration
+
+    /****/ volatile UINT32 Reserved4[55];
+
+    /****/ volatile UINT32 MATRIX_WPMR;     // Write Protection Mode Register
+
+    /****/ volatile UINT32 MATRIX_WPSR;     // Write Protection Status Register
+};
+
+#endif
+
+
+//--//
 // common for both SAM9261_ek and SAM9RL64
 
 #if defined(PLATFORM_ARM_SAM9261_ANY)  || defined(PLATFORM_ARM_SAM9RL64_ANY)
@@ -1735,6 +1908,502 @@ struct AT91_SDRAMC {
 };
 #endif
 
+//--//
+// SAM9X35
+
+#if defined(PLATFORM_ARM_SAM9X35_ANY)
+struct AT91_LCDC {
+
+     static const UINT32 c_Base = AT91C_BASE_LCDC;
+
+    /****/ volatile UINT32 LCDC_BA1;        // DMA Base Address Register 1
+
+    /****/ volatile UINT32 LCDC_BA2;        // DMA Base Address Register 2
+
+    /****/ volatile UINT32 LCDC_FRMP1;      // DMA Frame Pointer Register 1
+    static const    UINT32 LCDC_FRMPT1     = ((UINT32) 0x3FFFFF <<  0); // (LCDC) Frame Pointer Address 1
+
+    /****/ volatile UINT32 LCDC_FRMP2;      // DMA Frame Pointer Register 2
+    static const    UINT32 LCDC_FRMPT2     = ((UINT32) 0x1FFFFF <<  0); // (LCDC) Frame Pointer Address 2
+    
+    /****/ volatile UINT32 LCDC_FRMA1;      // DMA Frame Address Register 1
+
+    /****/ volatile UINT32 LCDC_FRMA2;      // DMA Frame Address Register 2
+
+    /****/ volatile UINT32 LCDC_FRMCFG;     // DMA Frame Configuration Register
+    static const    UINT32 LCDC_FRSIZE     = ((UINT32) 0x3FFFFF <<  0); // (LCDC) FRAME SIZE
+    static const    UINT32 LCDC_BLENGTH    = ((UINT32) 0xFUL << 24); // (LCDC) BURST LENGTH
+    
+    /****/ volatile UINT32 LCDC_DMACON;     // DMA Control Register
+    static const    UINT32 LCDC_DMAEN      = ((UINT32) 0x1 <<  0); // (LCDC) DAM Enable
+    static const    UINT32 LCDC_DMARST     = ((UINT32) 0x1 <<  1); // (LCDC) DMA Reset (WO)
+    static const    UINT32 LCDC_DMABUSY    = ((UINT32) 0x1 <<  2); // (LCDC) DMA Reset (WO)
+
+    /****/ volatile UINT32 LCDC_DMA2DCFG;   // DMA 2D addressing configuration
+    static const    UINT32 LCDC_ADDRINC    = ((UINT32) 0xFFFF <<  0); // (LCDC) Number of 32b words that the DMA must jump when going to the next line
+    static const    UINT32 LCDC_PIXELOFF   = ((UINT32) 0x1FUL << 24); // (LCDC) Offset (in bits) of the first pixel of the screen in the memory word which contain it
+
+    /****/ volatile UINT32 Reserved0[503]; 
+
+    /****/ volatile UINT32 LCDC_LCDCON1;    // LCD Control 1 Register
+    static const    UINT32 LCDC_BYPASS     = ((UINT32) 0x1 <<  0); // (LCDC) Bypass lcd_pccklk divider
+    static const    UINT32 LCDC_CLKVAL     = ((UINT32) 0x1FFUL << 12); // (LCDC) 9-bit Divider for pixel clock frequency
+    static const    UINT32 LCDC_LINCNT     = ((UINT32) 0x7FFUL << 21); // (LCDC) Line Counter (RO)
+
+    /****/ volatile UINT32 LCDC_LCDCON2;    // LCD Control 2 Register
+    static const    UINT32 LCDC_DISTYPE    = ((UINT32) 0x3 <<  0); // (LCDC) Display Type
+    static const    UINT32  LCDC_DISTYPE_STNMONO              = ((UINT32) 0x0); // (LCDC) STN Mono
+    static const    UINT32  LCDC_DISTYPE_STNCOLOR             = ((UINT32) 0x1); // (LCDC) STN Color
+    static const    UINT32  LCDC_DISTYPE_TFT                  = ((UINT32) 0x2); // (LCDC) TFT
+    static const    UINT32 LCDC_SCANMOD    = ((UINT32) 0x1 <<  2); // (LCDC) Scan Mode
+    static const    UINT32  LCDC_SCANMOD_SINGLESCAN           = ((UINT32) 0x0 <<  2); // (LCDC) Single Scan
+    static const    UINT32  LCDC_SCANMOD_DUALSCAN             = ((UINT32) 0x1 <<  2); // (LCDC) Dual Scan
+    static const    UINT32 LCDC_IFWIDTH    = ((UINT32) 0x3 <<  3);// (LCDC) Interface Width
+    static const    UINT32  LCDC_IFWIDTH_FOURBITSWIDTH        = ((UINT32) 0x0 <<  3); // (LCDC) 4 Bits
+    static const    UINT32  LCDC_IFWIDTH_EIGTHBITSWIDTH       = ((UINT32) 0x1 <<  3); // (LCDC) 8 Bits
+    static const    UINT32  LCDC_IFWIDTH_SIXTEENBITSWIDTH     = ((UINT32) 0x2 <<  3); // (LCDC) 16 Bits
+    static const    UINT32 LCDC_PIXELSIZE  = ((UINT32) 0x7 <<  5); // (LCDC) Bits per pixel
+    static const    UINT32  LCDC_PIXELSIZE_ONEBITSPERPIXEL      = ((UINT32) 0x0 <<  5); // (LCDC) 1 Bits
+    static const    UINT32  LCDC_PIXELSIZE_TWOBITSPERPIXEL      = ((UINT32) 0x1 <<  5); // (LCDC) 2 Bits
+    static const    UINT32  LCDC_PIXELSIZE_FOURBITSPERPIXEL     = ((UINT32) 0x2 <<  5); // (LCDC) 4 Bits
+    static const    UINT32  LCDC_PIXELSIZE_EIGTHBITSPERPIXEL    = ((UINT32) 0x3 <<  5); // (LCDC) 8 Bits
+    static const    UINT32  LCDC_PIXELSIZE_SIXTEENBITSPERPIXEL  = ((UINT32) 0x4 <<  5); // (LCDC) 16 Bits
+    static const    UINT32  LCDC_PIXELSIZE_TWENTYFOURBITSPERPIXEL = ((UINT32) 0x5 <<  5); // (LCDC) 24 Bits
+    static const    UINT32 LCDC_INVVD      = ((UINT32) 0x1 <<  8); // (LCDC) lcd datas polarity
+    static const    UINT32  LCDC_INVVD_NORMALPOL            = ((UINT32) 0x0 <<  8); // (LCDC) Normal Polarity
+    static const    UINT32  LCDC_INVVD_INVERTEDPOL          = ((UINT32) 0x1 <<  8); // (LCDC) Inverted Polarity
+    static const    UINT32 LCDC_INVFRAME   = ((UINT32) 0x1 <<  9); // (LCDC) lcd vsync polarity
+    static const    UINT32  LCDC_INVFRAME_NORMALPOL            = ((UINT32) 0x0 <<  9); // (LCDC) Normal Polarity
+    static const    UINT32  LCDC_INVFRAME_INVERTEDPOL          = ((UINT32) 0x1 <<  9); // (LCDC) Inverted Polarity
+    static const    UINT32 LCDC_INVLINE    = ((UINT32) 0x1 << 10); // (LCDC) lcd hsync polarity
+    static const    UINT32  LCDC_INVLINE_NORMALPOL            = ((UINT32) 0x0 << 10); // (LCDC) Normal Polarity
+    static const    UINT32  LCDC_INVLINE_INVERTEDPOL          = ((UINT32) 0x1 << 10); // (LCDC) Inverted Polarity
+    static const    UINT32 LCDC_INVCLK     = ((UINT32) 0x1 << 11); // (LCDC) lcd pclk polarity
+    static const    UINT32  LCDC_INVCLK_NORMALPOL            = ((UINT32) 0x0 << 11); // (LCDC) Normal Polarity
+    static const    UINT32  LCDC_INVCLK_INVERTEDPOL          = ((UINT32) 0x1 << 11); // (LCDC) Inverted Polarity
+    static const    UINT32 LCDC_INVDVAL    = ((UINT32) 0x1 << 12); // (LCDC) lcd dval polarity
+    static const    UINT32  LCDC_INVDVAL_NORMALPOL            = ((UINT32) 0x0 << 12); // (LCDC) Normal Polarity
+    static const    UINT32  LCDC_INVDVAL_INVERTEDPOL          = ((UINT32) 0x1 << 12); // (LCDC) Inverted Polarity
+    static const    UINT32 LCDC_CLKMOD     = ((UINT32) 0x1 << 15); // (LCDC) lcd pclk Mode
+    static const    UINT32  LCDC_CLKMOD_ACTIVEONLYDISP       = ((UINT32) 0x0 << 15); // (LCDC) Active during display period
+    static const    UINT32  LCDC_CLKMOD_ALWAYSACTIVE         = ((UINT32) 0x1 << 15); // (LCDC) Always Active
+    static const    UINT32 LCDC_MEMOR      = ((UINT32) 0x1 << 31); // (LCDC) lcd pclk Mode
+    static const    UINT32  LCDC_MEMOR_BIGIND               = ((UINT32) 0x0 << 31); // (LCDC) Big Endian
+    static const    UINT32  LCDC_MEMOR_LITTLEIND            = ((UINT32) 0x1 << 31); // (LCDC) Little Endian
+
+    /****/ volatile UINT32 LCDC_TIM1;       // LCD Timing Config 1 Register
+    static const    UINT32 LCDC_VFP        = ((UINT32) 0xFF <<  0); // (LCDC) Vertical Front Porch
+    static const    UINT32 LCDC_VBP        = ((UINT32) 0xFF <<  8); // (LCDC) Vertical Back Porch
+    static const    UINT32 LCDC_VPW        = ((UINT32) 0x3F << 16); // (LCDC) Vertical Synchronization Pulse Width
+    static const    UINT32 LCDC_VHDLY      = ((UINT32) 0xF << 24); // (LCDC) Vertical to Horizontal Delay
+
+    /****/ volatile UINT32 LCDC_TIM2;       // LCD Timing Config 2 Register
+    static const    UINT32 LCDC_HBP        = ((UINT32) 0xFF <<  0); // (LCDC) Horizontal Back Porch
+    static const    UINT32 LCDC_HPW        = ((UINT32) 0x3F <<  8); // (LCDC) Horizontal Synchronization Pulse Width
+    static const    UINT32 LCDC_HFP        = ((UINT32) 0x3FF << 22); // (LCDC) Horizontal Front Porch
+
+    /****/ volatile UINT32 LCDC_LCDFRCFG;   // LCD Frame Config Register
+    static const    UINT32 LCDC_LINEVAL    = ((UINT32) 0x7FF <<  0); // (LCDC) Vertical Size of LCD Module
+    static const    UINT32 LCDC_HOZVAL     = ((UINT32) 0x7FF << 21); // (LCDC) Horizontal Size of LCD Module
+
+    /****/ volatile UINT32 LCDC_FIFO;       // LCD FIFO Register
+    static const    UINT32 LCDC_FIFOTH     = ((UINT32) 0xFFFF <<  0); // (LCDC) FIFO Threshold
+
+    /****/ volatile UINT32 LCDC_MVAL;       // LCD Mode Toggle Rate Value Register
+    static const    UINT32 LCDC_MVALUE     = ((UINT32) 0xFF <<  0); // (LCDC) Toggle Rate Value
+    static const    UINT32 LCDC_MMODE      = ((UINT32) 0x1 << 31); // (LCDC) Toggle Rate Sel
+    static const    UINT32  LCDC_MMODE_EACHFRAME            = ((UINT32) 0x0 << 31); // (LCDC) Each Frame
+    static const    UINT32  LCDC_MMODE_MVALDEFINED          = ((UINT32) 0x1 << 31); // (LCDC) Defined by MVAL
+
+    /****/ volatile UINT32 LCDC_DP1_2;      // Dithering Pattern DP1_2 Register
+    static const    UINT32 LCDC_DP1_2_FIELD = ((UINT32) 0xFF <<  0); // (LCDC) Ratio
+
+    /****/ volatile UINT32 LCDC_DP4_7;      // Dithering Pattern DP4_7 Register
+    static const    UINT32 LCDC_DP4_7_FIELD = ((UINT32) 0xFFFFFFF <<  0); // (LCDC) Ratio
+
+    /****/ volatile UINT32 LCDC_DP3_5;      // Dithering Pattern DP3_5 Register
+    static const    UINT32 LCDC_DP3_5_FIELD = ((UINT32) 0xFFFFF <<  0); // (LCDC) Ratio
+
+    /****/ volatile UINT32 LCDC_DP2_3;      // Dithering Pattern DP2_3 Register
+    static const    UINT32 LCDC_DP2_3_FIELD = ((UINT32) 0xFFF <<  0); // (LCDC) Ratio
+
+    /****/ volatile UINT32 LCDC_DP5_7;      // Dithering Pattern DP5_7 Register
+    static const    UINT32 LCDC_DP5_7_FIELD = ((UINT32) 0xFFFFFFF <<  0); // (LCDC) Ratio
+
+    /****/ volatile UINT32 LCDC_DP3_4;      // Dithering Pattern DP3_4 Register
+    static const    UINT32 LCDC_DP3_4_FIELD = ((UINT32) 0xFFFF <<  0); // (LCDC) Ratio
+
+    /****/ volatile UINT32 LCDC_DP4_5;      // Dithering Pattern DP4_5 Register
+    static const    UINT32 LCDC_DP4_5_FIELD = ((UINT32) 0xFFFFF <<  0); // (LCDC) Ratio
+
+    /****/ volatile UINT32 LCDC_DP6_7;      // Dithering Pattern DP6_7 Register
+    static const    UINT32 LCDC_DP6_7_FIELD = ((UINT32) 0xFFFFFFF <<  0); // (LCDC) Ratio
+
+    /****/ volatile UINT32 LCDC_PWRCON;     // Power Control Register
+    static const    UINT32 LCDC_PWR        = ((UINT32) 0x1 <<  0); // (LCDC) LCD Module Power Control
+    static const    UINT32 LCDC_GUARDT     = ((UINT32) 0x7F <<  1); // (LCDC) Delay in Frame Period
+    static const    UINT32 LCDC_BUSY       = ((UINT32) 0x1UL << 31); // (LCDC) Read Only : 1 indicates that LCDC is busy
+    static const    UINT32  LCDC_BUSY_LCDNOTBUSY           = ((UINT32) 0x0 << 31); // (LCDC) LCD is Not Busy
+    static const    UINT32  LCDC_BUSY_LCDBUSY              = ((UINT32) 0x1 << 31); // (LCDC) LCD is Busy
+
+    /****/ volatile UINT32 LCDC_CTRSTCON;   // Contrast Control Register
+    static const    UINT32 LCDC_PS         = ((UINT32) 0x3 <<  0); // (LCDC) LCD Contrast Counter Prescaler
+    static const    UINT32  LCDC_PS_NOTDIVIDED           = ((UINT32) 0x0); // (LCDC) Counter Freq is System Freq.
+    static const    UINT32  LCDC_PS_DIVIDEDBYTWO         = ((UINT32) 0x1); // (LCDC) Counter Freq is System Freq divided by 2.
+    static const    UINT32  LCDC_PS_DIVIDEDBYFOUR        = ((UINT32) 0x2); // (LCDC) Counter Freq is System Freq divided by 4.
+    static const    UINT32  LCDC_PS_DIVIDEDBYEIGHT       = ((UINT32) 0x3); // (LCDC) Counter Freq is System Freq divided by 8.
+    static const    UINT32 LCDC_POL        = ((UINT32) 0x1 <<  2); // (LCDC) Polarity of output Pulse
+    static const    UINT32  LCDC_POL_NEGATIVEPULSE        = ((UINT32) 0x0 <<  2); // (LCDC) Negative Pulse
+    static const    UINT32  LCDC_POL_POSITIVEPULSE        = ((UINT32) 0x1 <<  2); // (LCDC) Positive Pulse
+    static const    UINT32 LCDC_ENA        = ((UINT32) 0x1 <<  3); // (LCDC) PWM generator Control
+    static const    UINT32  LCDC_ENA_PWMGEMDISABLED       = ((UINT32) 0x0 <<  3); // (LCDC) PWM Generator Disabled
+    static const    UINT32  LCDC_ENA_PWMGEMENABLED        = ((UINT32) 0x1 <<  3); // (LCDC) PWM Generator Disabled
+
+    /****/ volatile UINT32 LCDC_CTRSTVAL;   // Contrast Value Register
+    static const    UINT32 LCDC_CVAL       = ((UINT32) 0xFF <<  0); // (LCDC) PWM Compare Value
+
+    /****/ volatile UINT32 LCDC_IER;        // Interrupt Enable Register
+    static const    UINT32 LCDC_LNI        = ((UINT32) 0x1 <<  0); // (LCDC) Line Interrupt
+    static const    UINT32 LCDC_LSTLNI     = ((UINT32) 0x1 <<  1); // (LCDC) Last Line Interrupt
+    static const    UINT32 LCDC_EOFI       = ((UINT32) 0x1 <<  2); // (LCDC) End Of Frame Interrupt
+    static const    UINT32 LCDC_UFLWI      = ((UINT32) 0x1 <<  4); // (LCDC) FIFO Underflow Interrupt
+    static const    UINT32 LCDC_OWRI       = ((UINT32) 0x1 <<  5); // (LCDC) Over Write Interrupt
+    static const    UINT32 LCDC_MERI       = ((UINT32) 0x1 <<  6); // (LCDC) Memory Error  Interrupt
+
+    /****/ volatile UINT32 LCDC_IDR;        // Interrupt Disable Register
+    /****/ volatile UINT32 LCDC_IMR;        // Interrupt Mask Register
+    /****/ volatile UINT32 LCDC_ISR;        // Interrupt Enable Register
+    /****/ volatile UINT32 LCDC_ICR;        // Interrupt Clear Register
+    /****/ volatile UINT32 LCDC_GPR;        // General Purpose Register
+    static const    UINT32 LCDC_GPRBUS     = ((UINT32) 0xFF <<  0); // (LCDC) 8 bits available
+    /****/ volatile UINT32 LCDC_ITR;        // Interrupts Test Register
+    /****/ volatile UINT32 LCDC_IRR;        // Interrupts Raw Status Register
+    /****/ volatile UINT32 Reserved1[230];
+    /****/ volatile UINT32 LCDC_LUT_ENTRY[256];     // LUT Entries Register
+};
+
+
+struct AT91_SMC {
+     static const UINT32 c_Base = AT91C_BASE_SMC;
+
+    /****/ volatile UINT32 SMC_SETUP0;  //  Setup Register for CS 0
+
+    /****/ volatile UINT32 SMC_PULSE0;  //  Pulse Register for CS 0
+
+    /****/ volatile UINT32 SMC_CYCLE0;  //  Cycle Register for CS 0
+
+    /****/ volatile UINT32 SMC_CTRL0;   //  Control Register for CS 0
+    static const    UINT32 SMC_READMODE    = (0x1 <<  0); // (Static Memory Controller) Read Mode
+    static const    UINT32 SMC_WRITEMODE   = (0x1 <<  1); // (Static Memory Controller) Write Mode
+    static const    UINT32 SMC_NWAITM      = (0x3 <<  5); // (Static Memory Controller) NWAIT Mode
+    static const    UINT32  SMC_NWAITM_NWAIT_DISABLE        = (0x0 <<  5); // (Static Memory Controller) External NWAIT disabled.
+    static const    UINT32  SMC_NWAITM_NWAIT_ENABLE_FROZEN  = (0x2 <<  5); // (Static Memory Controller) External NWAIT enabled in frozen mode.
+    static const    UINT32  SMC_NWAITM_NWAIT_ENABLE_READY   = (0x3 <<  5); // (Static Memory Controller) External NWAIT enabled in ready mode.
+    static const    UINT32 SMC_BAT         = (0x1 <<  8); // (Static Memory Controller) Byte Access Type
+    static const    UINT32  SMC_BAT_BYTE_SELECT          = (0x0 <<  8); // (Static Memory Controller) Write controled by ncs, nbs0, nbs1, nbs2, nbs3. Read controled by ncs, nrd, nbs0, nbs1, nbs2, nbs3.
+    static const    UINT32  SMC_BAT_BYTE_WRITE           = (0x1 <<  8); // (Static Memory Controller) Write controled by ncs, nwe0, nwe1, nwe2, nwe3. Read controled by ncs and nrd.
+    static const    UINT32 SMC_DBW         = (0x3 << 12); // (Static Memory Controller) Data Bus Width
+    static const    UINT32  SMC_DBW_WIDTH_EIGTH_BITS     = (0x0 << 12); // (Static Memory Controller) 8 bits.
+    static const    UINT32  SMC_DBW_WIDTH_SIXTEEN_BITS   = (0x1 << 12); // (Static Memory Controller) 16 bits.
+    static const    UINT32  SMC_DBW_WIDTH_THIRTY_TWO_BITS = (0x2 << 12); // (Static Memory Controller) 32 bits.
+    static const    UINT32 SMC_TDF         = (0xFUL << 16); // (Static Memory Controller) Data Float Time.
+    static const    UINT32 SMC_TDFEN       = (0x1UL << 20); // (Static Memory Controller) TDF Enabled.
+    static const    UINT32 SMC_PMEN        = (0x1UL << 24); // (Static Memory Controller) Page Mode Enabled.
+    static const    UINT32 SMC_PS          = (0x3UL << 28); // (Static Memory Controller) Page Size
+    static const    UINT32  SMC_PS_SIZE_FOUR_BYTES      = (0x0UL << 28); // (Static Memory Controller) 4 bytes.
+    static const    UINT32  SMC_PS_SIZE_EIGHT_BYTES     = (0x1UL << 28); // (Static Memory Controller) 8 bytes.
+    static const    UINT32  SMC_PS_SIZE_SIXTEEN_BYTES   = (0x2UL << 28); // (Static Memory Controller) 16 bytes.
+    static const    UINT32  SMC_PS_SIZE_THIRTY_TWO_BYTES = (0x3UL << 28); // (Static Memory Controller) 32 bytes.
+
+    /****/ volatile UINT32 SMC_SETUP1;  //  Setup Register for CS 1
+
+    /****/ volatile UINT32 SMC_PULSE1;  //  Pulse Register for CS 1
+
+    /****/ volatile UINT32 SMC_CYCLE1;  //  Cycle Register for CS 1
+
+    /****/ volatile UINT32 SMC_CTRL1;   //  Control Register for CS 1
+
+    /****/ volatile UINT32 SMC_SETUP2;  //  Setup Register for CS 2
+
+    /****/ volatile UINT32 SMC_PULSE2;  //  Pulse Register for CS 2
+
+    /****/ volatile UINT32 SMC_CYCLE2;  //  Cycle Register for CS 2
+
+    /****/ volatile UINT32 SMC_CTRL2;   //  Control Register for CS 2
+
+    /****/ volatile UINT32 SMC_SETUP3;  //  Setup Register for CS 3
+
+    /****/ volatile UINT32 SMC_PULSE3;  //  Pulse Register for CS 3
+
+    /****/ volatile UINT32 SMC_CYCLE3;  //  Cycle Register for CS 3
+
+    /****/ volatile UINT32 SMC_CTRL3;   //  Control Register for CS 3
+
+    /****/ volatile UINT32 SMC_SETUP4;  //  Setup Register for CS 4
+
+    /****/ volatile UINT32 SMC_PULSE4;  //  Pulse Register for CS 4
+
+    /****/ volatile UINT32 SMC_CYCLE4;  //  Cycle Register for CS 4
+
+    /****/ volatile UINT32 SMC_CTRL4;   //  Control Register for CS 4
+
+    /****/ volatile UINT32 SMC_SETUP5;  //  Setup Register for CS 5
+
+    /****/ volatile UINT32 SMC_PULSE5;  //  Pulse Register for CS 5
+
+    /****/ volatile UINT32 SMC_CYCLE5;  //  Cycle Register for CS 5
+
+    /****/ volatile UINT32 SMC_CTRL5;   //  Control Register for CS 5
+
+    /****/ volatile UINT32 SMC_SETUP6;  //  Setup Register for CS 6
+
+    /****/ volatile UINT32 SMC_PULSE6;  //  Pulse Register for CS 6
+
+    /****/ volatile UINT32 SMC_CYCLE6;  //  Cycle Register for CS 6
+
+    /****/ volatile UINT32 SMC_CTRL6;   //  Control Register for CS 6
+
+    /****/ volatile UINT32 SMC_SETUP7;  //  Setup Register for CS 7
+
+    /****/ volatile UINT32 SMC_PULSE7;  //  Pulse Register for CS 7
+
+    /****/ volatile UINT32 SMC_CYCLE7;  //  Cycle Register for CS 7
+
+    /****/ volatile UINT32 SMC_CTRL7;   //  Control Register for CS 7
+};
+
+//--//
+//////////////////////////////////////////////////////////////////////////////
+// AT91_SDRAMC
+//
+struct AT91_SDRAMC {
+
+    static const UINT32 c_Base = AT91C_BASE_SDRAMC;
+
+    /****/ volatile UINT32 SDRAMC_MR;   // SDRAM Controller Mode Register
+    static const    UINT32 SDRAMC_MODE     = (0xF <<  0); // (SDRAMC); Mode
+    static const    UINT32  SDRAMC_MODE_NORMAL_CMD           = (0x0); // (SDRAMC) Normal Mode
+    static const    UINT32  SDRAMC_MODE_NOP_CMD              = (0x1); // (SDRAMC) Issue a NOP Command at every access
+    static const    UINT32  SDRAMC_MODE_PRCGALL_CMD          = (0x2); // (SDRAMC) Issue a All Banks Precharge Command at every access
+    static const    UINT32  SDRAMC_MODE_LMR_CMD              = (0x3); // (SDRAM) Issue a Load Mode Register at every access
+    static const    UINT32  SDRAMC_MODE_RFSH_CMD             = (0x4); // (SDRAM) Issue a Refresh
+    static const    UINT32  SDRAMC_MODE_EXT_LMR_CMD          = (0x5); // (SDRAM) Issue an Extended Load Mode Register
+    static const    UINT32  SDRAMC_MODE_DEEP_CMD             = (0x6); // (SDRAM) Enter Deep Power Mode
+
+    /****/ volatile UINT32 SDRAMC_TR;   // SDRAM Controller Refresh Timer Register
+    static const    UINT32 SDRAMC_COUNT    = (0xFFF <<  0); // (SDRAM) Refresh Counter
+
+    /****/ volatile UINT32 SDRAMC_CR;   // SDRAM Controller Configuration Register
+    static const    UINT32 SDRAMC_NC       = (0x3 <<  0); // (SDRAM) Number of Column Bits
+    static const    UINT32  SDRAMC_NC_8                      = (0x0); // (SDRAM) 8 Bits
+    static const    UINT32  SDRAMC_NC_9                      = (0x1); // (SDRAM) 9 Bits
+    static const    UINT32  SDRAMC_NC_10                     = (0x2); // (SDRAM) 10 Bits
+    static const    UINT32  SDRAMC_NC_11                     = (0x3); // (SDRAM) 11 Bits
+    static const    UINT32 SDRAMC_NR       = (0x3 <<  2); // (SDRAM) Number of Row Bits
+    static const    UINT32  SDRAMC_NR_11                     = (0x0 <<  2); // (SDRAM) 11 Bits
+    static const    UINT32  SDRAMC_NR_12                     = (0x1 <<  2); // (SDRAM) 12 Bits
+    static const    UINT32  SDRAMC_NR_13                     = (0x2 <<  2); // (SDRAM) 13 Bits
+    static const    UINT32  SDRAMC_NR_14                     = (0x3 <<  2); // (SDRAM) 14 Bits
+    static const    UINT32 SDRAMC_CAS      = (0x7 <<  4); // (SDRAM) CAS Latency
+    static const    UINT32  SDRAMC_CAS_2                     = (0x2 <<  4); // (SDRAM) 2 cycles
+    static const    UINT32  SDRAMC_CAS_3                     = (0x3 <<  4); // (SDRAM) 3 cycles
+    static const    UINT32 SDRAMC_DLL      = (0x1 <<  7); // (SDRAM) Reset DLL
+    static const    UINT32  SDRAMC_DLL_RESET_DISABLE         = (0x0 <<  7); // (SDRAM) Disable DLL reset
+    static const    UINT32  SDRAMC_DLL_RESET_ENABLE          = (0x1 <<  7); // (SDRAM) Enable DLL reset
+    static const    UINT32 SDRAMC_DIC      = (0x1 <<  8); // (SDRAM) Output Driver Impedance Control
+    static const    UINT32  SDRAMC_DIC_DDR1_2_NORMALSTRENGTH = (0x0 <<  8); // (SDRAM) Normal driver strength
+    static const    UINT32  SDRAMC_DIC_DDR1_2_WEAKSTRENGTH   = (0x1 <<  8); // (SDRAM) Weak driver strength
+    static const    UINT32 SDRAMC_DIS_DLL   = (0x1 <<  9); // (SDRAM) Disable DLL
+    static const    UINT32  SDRAMC_DIS_DLL_ENABLE            = (0x0 <<  9); // (SDRAM) Enable DLL
+    static const    UINT32  SDRAMC_DIS_DLL_DISABLE           = (0x1 <<  9); // (SDRAM) Disable DLL
+    static const    UINT32 SDRAMC_OCD      = (0x7 <<  12); // (SDRAM) Off Chip Driver
+    static const    UINT32  SDRAMC_OCD_DDR2_EXITCALIB        = (0x0 <<  12); // (SDRAM) Exit OCD calibration
+    static const    UINT32  SDRAMC_OCD_DDR2_DEFAULT_CALIB    = (0x7 <<  12); // (SDRAM) OCD calibration default
+    static const    UINT32 SDRAMC_EBISHARE = (0x1 <<  16); // (SDRAM) External Bus Interface is Shared
+    static const    UINT32 SDRAMC_ACTBST   = (0x1 <<  18); // (SDRAM) Active Bank X to Burst Stop Read Access Bank Y
+    static const    UINT32 SDRAMC_NB       = (0x1 <<  20); // (SDRAM) Number of Banks
+    static const    UINT32  SDRAMC_NB_4_BANKS                = (0x0 <<  20); // (SDRAM) 4 banks
+    static const    UINT32  SDRAMC_NB_8_BANKS                = (0x1 <<  20); // (SDRAM) 8 banks
+    static const    UINT32 SDRAMC_DECOD    = (0x1 <<  22); // (SDRAM) Type of Decoding
+    static const    UINT32  SDRAMC_DECOD_SEQUENTIAL          = (0x0 <<  20); // (SDRAM) Sequential decoding
+    static const    UINT32  SDRAMC_DECOD_INTERLEAVED         = (0x1 <<  20); // (SDRAM) Interleaved decoding
+
+    /****/ volatile UINT32 SDRAMC_TPR0; // SDRAM Controller Timing Parameter Register 0
+    static const    UINT32 SDRAMC_TRAS     = (0xFUL << 0); // (SDRAM) Number of RAS Active Time Cycles
+    static const    UINT32  SDRAMC_TRAS_0                    = (0x0UL << 0); // (SDRAM) Value :  0
+    static const    UINT32  SDRAMC_TRAS_1                    = (0x1UL << 0); // (SDRAM) Value :  1
+    static const    UINT32  SDRAMC_TRAS_2                    = (0x2UL << 0); // (SDRAM) Value :  2
+    static const    UINT32  SDRAMC_TRAS_3                    = (0x3UL << 0); // (SDRAM) Value :  3
+    static const    UINT32  SDRAMC_TRAS_4                    = (0x4UL << 0); // (SDRAM) Value :  4
+    static const    UINT32  SDRAMC_TRAS_5                    = (0x5UL << 0); // (SDRAM) Value :  5
+    static const    UINT32  SDRAMC_TRAS_6                    = (0x6UL << 0); // (SDRAM) Value :  6
+    static const    UINT32  SDRAMC_TRAS_7                    = (0x7UL << 0); // (SDRAM) Value :  7
+    static const    UINT32  SDRAMC_TRAS_8                    = (0x8UL << 0); // (SDRAM) Value :  8
+    static const    UINT32  SDRAMC_TRAS_9                    = (0x9UL << 0); // (SDRAM) Value :  9
+    static const    UINT32  SDRAMC_TRAS_10                   = (0xAUL << 0); // (SDRAM) Value : 10
+    static const    UINT32  SDRAMC_TRAS_11                   = (0xBUL << 0); // (SDRAM) Value : 11
+    static const    UINT32  SDRAMC_TRAS_12                   = (0xCUL << 0); // (SDRAM) Value : 12
+    static const    UINT32  SDRAMC_TRAS_13                   = (0xDUL << 0); // (SDRAM) Value : 13
+    static const    UINT32  SDRAMC_TRAS_14                   = (0xEUL << 0); // (SDRAM) Value : 14
+    static const    UINT32  SDRAMC_TRAS_15                   = (0xFUL << 0); // (SDRAM) Value : 15
+    static const    UINT32 SDRAMC_TRCD     = (0xFUL << 4); // (SDRAM) Number of RAS to CAS Delay Cycles
+    static const    UINT32  SDRAMC_TRCD_0                    = (0x0UL << 4); // (SDRAM) Value :  0
+    static const    UINT32  SDRAMC_TRCD_1                    = (0x1UL << 4); // (SDRAM) Value :  1
+    static const    UINT32  SDRAMC_TRCD_2                    = (0x2UL << 4); // (SDRAM) Value :  2
+    static const    UINT32  SDRAMC_TRCD_3                    = (0x3UL << 4); // (SDRAM) Value :  3
+    static const    UINT32  SDRAMC_TRCD_4                    = (0x4UL << 4); // (SDRAM) Value :  4
+    static const    UINT32  SDRAMC_TRCD_5                    = (0x5UL << 4); // (SDRAM) Value :  5
+    static const    UINT32  SDRAMC_TRCD_6                    = (0x6UL << 4); // (SDRAM) Value :  6
+    static const    UINT32  SDRAMC_TRCD_7                    = (0x7UL << 4); // (SDRAM) Value :  7
+    static const    UINT32  SDRAMC_TRCD_8                    = (0x8UL << 4); // (SDRAM) Value :  8
+    static const    UINT32  SDRAMC_TRCD_9                    = (0x9UL << 4); // (SDRAM) Value :  9
+    static const    UINT32  SDRAMC_TRCD_10                   = (0xAUL << 4); // (SDRAM) Value : 10
+    static const    UINT32  SDRAMC_TRCD_11                   = (0xBUL << 4); // (SDRAM) Value : 11
+    static const    UINT32  SDRAMC_TRCD_12                   = (0xCUL << 4); // (SDRAM) Value : 12
+    static const    UINT32  SDRAMC_TRCD_13                   = (0xDUL << 4); // (SDRAM) Value : 13
+    static const    UINT32  SDRAMC_TRCD_14                   = (0xEUL << 4); // (SDRAM) Value : 14
+    static const    UINT32  SDRAMC_TRCD_15                   = (0xFUL << 4); // (SDRAM) Value : 15
+    static const    UINT32 SDRAMC_TWR      = (0xF <<  8); // (SDRAM) Number of Write Recovery Time Cycles
+    static const    UINT32  SDRAMC_TWR_0                     = (0x0 <<  8); // (SDRAM) Value :  0
+    static const    UINT32  SDRAMC_TWR_1                     = (0x1 <<  8); // (SDRAM) Value :  1
+    static const    UINT32  SDRAMC_TWR_2                     = (0x2 <<  8); // (SDRAM) Value :  2
+    static const    UINT32  SDRAMC_TWR_3                     = (0x3 <<  8); // (SDRAM) Value :  3
+    static const    UINT32  SDRAMC_TWR_4                     = (0x4 <<  8); // (SDRAM) Value :  4
+    static const    UINT32  SDRAMC_TWR_5                     = (0x5 <<  8); // (SDRAM) Value :  5
+    static const    UINT32  SDRAMC_TWR_6                     = (0x6 <<  8); // (SDRAM) Value :  6
+    static const    UINT32  SDRAMC_TWR_7                     = (0x7 <<  8); // (SDRAM) Value :  7
+    static const    UINT32  SDRAMC_TWR_8                     = (0x8 <<  8); // (SDRAM) Value :  8
+    static const    UINT32  SDRAMC_TWR_9                     = (0x9 <<  8); // (SDRAM) Value :  9
+    static const    UINT32  SDRAMC_TWR_10                    = (0xA <<  8); // (SDRAM) Value : 10
+    static const    UINT32  SDRAMC_TWR_11                    = (0xB <<  8); // (SDRAM) Value : 11
+    static const    UINT32  SDRAMC_TWR_12                    = (0xC <<  8); // (SDRAM) Value : 12
+    static const    UINT32  SDRAMC_TWR_13                    = (0xD <<  8); // (SDRAM) Value : 13
+    static const    UINT32  SDRAMC_TWR_14                    = (0xE <<  8); // (SDRAM) Value : 14
+    static const    UINT32  SDRAMC_TWR_15                    = (0xF <<  8); // (SDRAM) Value : 15
+    static const    UINT32 SDRAMC_TRC      = (0xF << 12); // (SDRAM) Number of RAS Cycle Time Cycles
+    static const    UINT32  SDRAMC_TRC_0                     = (0x0 << 12); // (SDRAM) Value :  0
+    static const    UINT32  SDRAMC_TRC_1                     = (0x1 << 12); // (SDRAM) Value :  1
+    static const    UINT32  SDRAMC_TRC_2                     = (0x2 << 12); // (SDRAM) Value :  2
+    static const    UINT32  SDRAMC_TRC_3                     = (0x3 << 12); // (SDRAM) Value :  3
+    static const    UINT32  SDRAMC_TRC_4                     = (0x4 << 12); // (SDRAM) Value :  4
+    static const    UINT32  SDRAMC_TRC_5                     = (0x5 << 12); // (SDRAM) Value :  5
+    static const    UINT32  SDRAMC_TRC_6                     = (0x6 << 12); // (SDRAM) Value :  6
+    static const    UINT32  SDRAMC_TRC_7                     = (0x7 << 12); // (SDRAM) Value :  7
+    static const    UINT32  SDRAMC_TRC_8                     = (0x8 << 12); // (SDRAM) Value :  8
+    static const    UINT32  SDRAMC_TRC_9                     = (0x9 << 12); // (SDRAM) Value :  9
+    static const    UINT32  SDRAMC_TRC_10                    = (0xA << 12); // (SDRAM) Value : 10
+    static const    UINT32  SDRAMC_TRC_11                    = (0xB << 12); // (SDRAM) Value : 11
+    static const    UINT32  SDRAMC_TRC_12                    = (0xC << 12); // (SDRAM) Value : 12
+    static const    UINT32  SDRAMC_TRC_13                    = (0xD << 12); // (SDRAM) Value : 13
+    static const    UINT32  SDRAMC_TRC_14                    = (0xE << 12); // (SDRAM) Value : 14
+    static const    UINT32  SDRAMC_TRC_15                    = (0xF << 12); // (SDRAM) Value : 15
+    static const    UINT32 SDRAMC_TRP      = (0xFUL << 16); // (SDRAM) Number of RAS Precharge Time Cycles
+    static const    UINT32  SDRAMC_TRP_0                     = (0x0UL << 16); // (SDRAM) Value :  0
+    static const    UINT32  SDRAMC_TRP_1                     = (0x1UL << 16); // (SDRAM) Value :  1
+    static const    UINT32  SDRAMC_TRP_2                     = (0x2UL << 16); // (SDRAM) Value :  2
+    static const    UINT32  SDRAMC_TRP_3                     = (0x3UL << 16); // (SDRAM) Value :  3
+    static const    UINT32  SDRAMC_TRP_4                     = (0x4UL << 16); // (SDRAM) Value :  4
+    static const    UINT32  SDRAMC_TRP_5                     = (0x5UL << 16); // (SDRAM) Value :  5
+    static const    UINT32  SDRAMC_TRP_6                     = (0x6UL << 16); // (SDRAM) Value :  6
+    static const    UINT32  SDRAMC_TRP_7                     = (0x7UL << 16); // (SDRAM) Value :  7
+    static const    UINT32  SDRAMC_TRP_8                     = (0x8UL << 16); // (SDRAM) Value :  8
+    static const    UINT32  SDRAMC_TRP_9                     = (0x9UL << 16); // (SDRAM) Value :  9
+    static const    UINT32  SDRAMC_TRP_10                    = (0xAUL << 16); // (SDRAM) Value : 10
+    static const    UINT32  SDRAMC_TRP_11                    = (0xBUL << 16); // (SDRAM) Value : 11
+    static const    UINT32  SDRAMC_TRP_12                    = (0xCUL << 16); // (SDRAM) Value : 12
+    static const    UINT32  SDRAMC_TRP_13                    = (0xDUL << 16); // (SDRAM) Value : 13
+    static const    UINT32  SDRAMC_TRP_14                    = (0xEUL << 16); // (SDRAM) Value : 14
+    static const    UINT32  SDRAMC_TRP_15                    = (0xFUL << 16); // (SDRAM) Value : 15
+    static const    UINT32 SDRAMC_TRRD     = (0xFUL << 20); // (SDRAM) Number of Active BankA to Active BankB Time Cycles
+    static const    UINT32 SDRAMC_TWTR     = (0x7UL << 24); // (SDRAM) Number of Internal Write to Read Delay Time Cycles
+    static const    UINT32 SDRAMC_REDUCE_WRRD = (0x1UL << 27); // (SDRAM) Number of Reduce Write to Read Delay Time Cycles
+    static const    UINT32 SDRAMC_TMRD     = (0xFUL << 28); // (SDRAM) Number of LMR Command to Active or Refresh Command Time Cycles
+
+    /****/ volatile UINT32 SDRAMC_TPR1; // SDRAM Controller Timing Parameter Register 1
+    static const    UINT32 SDRAMC_TRFC     = ((UINT32) 0x1FUL <<  0); // (SDRAM) Row Cycle Delay
+    static const    UINT32 SDRAMC_TXSNR    = ((UINT32) 0xFFUL <<  8); // (SDRAM) Exit Self Refresh Delay to Non-read Command
+    static const    UINT32 SDRAMC_TXSR     = ((UINT32) 0xFFUL << 16); // (SDRAM) Exit Self Refresh Delay to Read Command
+    static const    UINT32  SDRAMC_TXSR_0                    = (0x0ul << 28); // (SDRAM) Value :  0
+    static const    UINT32  SDRAMC_TXSR_1                    = (0x1ul << 28); // (SDRAM) Value :  1
+    static const    UINT32  SDRAMC_TXSR_2                    = (0x2ul << 28); // (SDRAM) Value :  2
+    static const    UINT32  SDRAMC_TXSR_3                    = (0x3ul << 28); // (SDRAM) Value :  3
+    static const    UINT32  SDRAMC_TXSR_4                    = (0x4ul << 28); // (SDRAM) Value :  4
+    static const    UINT32  SDRAMC_TXSR_5                    = (0x5ul << 28); // (SDRAM) Value :  5
+    static const    UINT32  SDRAMC_TXSR_6                    = (0x6ul << 28); // (SDRAM) Value :  6
+    static const    UINT32  SDRAMC_TXSR_7                    = (0x7ul << 28); // (SDRAM) Value :  7
+    static const    UINT32  SDRAMC_TXSR_8                    = (0x8ul << 28); // (SDRAM) Value :  8
+    static const    UINT32  SDRAMC_TXSR_9                    = (0x9ul << 28); // (SDRAM) Value :  9
+    static const    UINT32  SDRAMC_TXSR_10                   = (0xAul << 28); // (SDRAM) Value : 10
+    static const    UINT32  SDRAMC_TXSR_11                   = (0xBul << 28); // (SDRAM) Value : 11
+    static const    UINT32  SDRAMC_TXSR_12                   = (0xCul << 28); // (SDRAM) Value : 12
+    static const    UINT32  SDRAMC_TXSR_13                   = (0xDul << 28); // (SDRAM) Value : 13
+    static const    UINT32  SDRAMC_TXSR_14                   = (0xEul << 28); // (SDRAM) Value : 14
+    static const    UINT32  SDRAMC_TXSR_15                   = (0xFul << 28); // (SDRAM) Value : 15
+    static const    UINT32 SDRAMC_TXP      = ((UINT32) 0xFUL << 28); // (SDRAM) Exit Power Down to First Command
+
+    /****/ volatile UINT32 SDRAMC_TPR2; // SDRAM Controller Timing Parameter Register 2
+    static const    UINT32 SDRAMC_TXARD    = ((UINT32) 0xFUL <<  0); // (SDRAM) APDE Delay to Read Command in "Fast Exit" mode
+    static const    UINT32 SDRAMC_TXARDS   = ((UINT32) 0xFUL <<  4); // (SDRAM) APDE Dealy to Read Command in "Slow Exit" mode
+    static const    UINT32 SDRAMC_TRPA     = ((UINT32) 0xFUL <<  8); // (SDRAM) Row Precharge All delay
+    static const    UINT32 SDRAMC_TRTP     = ((UINT32) 0x7UL << 12); // (SDRAM) Read to Precharge
+    static const    UINT32 SDRAMC_TFAW     = ((UINT32) 0xFUL << 16); // (SDRAM) Four active Window
+
+    /****/ volatile UINT32 Reserved1;
+
+    /****/ volatile UINT32 SDRAMC_LPR;  // SDRAM Controller Low Power Register
+    static const    UINT32 SDRAMC_LPCB     = (0x3 <<  0); // (SDRAM) Low-power Configurations
+    static const    UINT32  SDRAMC_LPCB_DISABLE              = (0x0); // (SDRAM) Disable Low Power Features
+    static const    UINT32  SDRAMC_LPCB_SELF_REFRESH         = (0x1); // (SDRAM) Enable SELF_REFRESH
+    static const    UINT32  SDRAMC_LPCB_POWER_DOWN           = (0x2); // (SDRAM) Enable POWER_DOWN
+    static const    UINT32  SDRAMC_LPCB_DEEP_POWER_DOWN      = (0x3); // (SDRAM) Enable DEEP_POWER_DOWN
+    static const    UINT32 SDRAMC_CLK_FR   = (0x1 <<  2); // (SDRAM) Clock Frozen Command bit
+    static const    UINT32  SDRAMC_CLK_FR_DISABLE            = (0x0); // (SDRAM) Clock frozen is disabled
+    static const    UINT32  SDRAMC_CLK_FR_ENABLE             = (0x1); // (SDRAM) Clock frozen is enabled
+    static const    UINT32 SDRAMC_PASR     = (0x7 <<  4); // (SDRAM) Partial Array Self Refresh = (only for Low Power SDRAM);
+    static const    UINT32 SDRAMC_DS       = (0x7 <<  8); // (SDRAM) Drive Strength = (only for Low Power SDRAM);
+    static const    UINT32 SDRAMC_TIMEOUT  = (0x3 << 12); // (SDRAM) Time to define when Low Power Mode is enabled
+    static const    UINT32  SDRAMC_TIMEOUT_0_CLK_CYCLES      = (0x0 << 12); // (SDRAM) Activate SDRAM Low Power Mode Immediately
+    static const    UINT32  SDRAMC_TIMEOUT_64_CLK_CYCLES     = (0x1 << 12); // (SDRAM) Activate SDRAM Low Power Mode after 64 clock cycles after the end of the last transfer
+    static const    UINT32  SDRAMC_TIMEOUT_128_CLK_CYCLES    = (0x2 << 12); // (SDRAM) Activate SDRAM Low Power Mode after 64 clock cycles after the end of the last transfer
+    static const    UINT32 SDRAMC_APDE     = (0x1 << 16); // (SDRAM) Active Power Down Exit Time
+    static const    UINT32  SDRAMC_APDE_DDR2_FAST_EXIT       = (0x0); // (SDRAM) Fast exit from power down
+    static const    UINT32  SDRAMC_APDE_DDR2_SLOW_EXIT       = (0x1); // (SDRAM) Slow exit from power down
+    static const    UINT32 SDRAMC_UPD_MR   = (0x3 << 20); // (SDRAM) Update Load Mode and Extended Mode Registers
+    static const    UINT32  SDRAMC_UPD_MR_NO_UPDATE          = (0x0); // (SDRAM) Update is disabled
+    static const    UINT32  SDRAMC_UPD_MR_UPDATE_SHAREDBUS   = (0x1); // (SDRAM) Automatic update shared external bus
+    static const    UINT32  SDRAMC_UPD_MR_UPDATE_NOSHAREDBUS = (0x2); // (SDRAM) Aytomatic update external bus not shared
+
+    /****/ volatile UINT32 SDRAMC_MDR;  // SDRAM Controller Memory Device Register
+    static const    UINT32 SDRAMC_MD       = (0x7 <<  0); // (SDRAM) Memory Device Type
+    static const    UINT32  SDRAMC_MD_SDRAM                  = (0x0); // (SDRAM) SDRAM Mode
+    static const    UINT32  SDRAMC_MD_LOW_POWER_SDRAM        = (0x1); // (SDRAM) SDRAM Low Power Mode
+    static const    UINT32  SDRAMC_MD_DDR1_SDRAM             = (0x2); // (SDRAM) SDRAM 
+    static const    UINT32  SDRAMC_MD_LOW_POWER_DDR1_SDRAM   = (0x3); // (SDRAM) SDRAM Low Power DDR1 Mode
+    static const    UINT32  SDRAMC_MD_DDR2_SDRAM             = (0x4); // (SDRAM) SDRAM DDR2 Mode
+    static const    UINT32 SDRAMC_DBW      = (0x1 <<  4); // (SDRAM) Data Bus Width
+    static const    UINT32  SDRAMC_DBW_32_BITS               = (0x0 <<  4); // (SDRAM) 32 Bits datas bus
+    static const    UINT32  SDRAMC_DBW_16_BITS               = (0x1 <<  4); // (SDRAM) 16 Bits datas bus
+
+    /****/ volatile UINT32 DDRSDRC_DLL;  // SDRAM Controller DLL Information Register
+    static const    UINT32 SDRAMC_DLL_MDINC = (0x1 <<  0); // (SDRAM) DLL Master Delay Increment Enable Bit
+    static const    UINT32  SDRAMC_DLL_MDINC_DISABLE         = (0x0); // (SDRAM) DLL is not incrementing the Master delay counter
+    static const    UINT32  SDRAMC_DLL_MDINC_ENABLE          = (0x1); // (SDRAM) DLL is incrementing the Master delay counter
+    static const    UINT32 SDRAMC_DLL_MDDEC = (0x1 <<  1); // (SDRAM) DLL Master Delay Decrement Enable Bit
+    static const    UINT32  SDRAMC_DLL_MDDEC_DISABLE         = (0x0); // (SDRAM) DLL is not decrementing the Master delay counter
+    static const    UINT32  SDRAMC_DLL_MDDEC_ENABLE          = (0x1); // (SDRAM) DLL is decrementing the Master delay counter
+    static const    UINT32 SDRAMC_DLL_MDOVF = (0x1 <<  2); // (SDRAM) DLL Master Delay Overflow Flag
+    static const    UINT32 SDRAMC_DLL_MDVAL = (0xFF << 8); // (SDRAM) DLL Master Delay Value
+
+    /****/ volatile UINT32 Reserved2;
+
+    /****/ volatile UINT32 SDRAMC_HSR;  // SDRAM Controller High Speed Register
+    static const    UINT32 SDRAMC_DAR       = (0x1 <<  2); // (SDRAM) Disable Anticipated Read Access Bit
+    static const    UINT32  SDRAMC_DAR_ENABLED               = (0x0); // (SDRAM) Anticipated Read Access is enabled
+    static const    UINT32  SDRAMC_DAR_DISABLE               = (0x1); // (SDRAM) Anticipated Read Access is disabled
+
+};
+#endif
+
 /**********************************************************************************************************************/
 /**********************************************************************************************************************/
 
@@ -1764,7 +2433,7 @@ struct AT91
 
     static AT91_UDP     & UDP()             { return *(AT91_UDP     *)(size_t)(AT91_UDP     ::c_Base                                      ); }
 
-#if defined(PLATFORM_ARM_SAM9261_ANY) || defined(PLATFORM_ARM_SAM9RL64_ANY)
+#if defined(PLATFORM_ARM_SAM9261_ANY) || defined(PLATFORM_ARM_SAM9RL64_ANY) || defined(PLATFORM_ARM_SAM9X35_ANY)
     static AT91_LCDC    & LCDC()            { return *(AT91_LCDC    *)(size_t)(AT91_LCDC    ::c_Base                                      ); }    
 
     static AT91_SDRAMC  & SDRAMC()          { return *(AT91_SDRAMC  *)(size_t)(AT91_SDRAMC  ::c_Base                                      ); }
@@ -1838,7 +2507,11 @@ private:
 struct AT91_TIMER_Driver
 {
     static const UINT32 c_SystemTimer   = 0;
+#if defined(PLATFORM_ARM_SAM9X35_ANY)
+    static const UINT32 c_MaxTimerValue = 0xFFFFFFFF;
+#else
     static const UINT16 c_MaxTimerValue = 0xFFFF; 
+#endif
     
     //--//
     
@@ -1873,7 +2546,11 @@ struct AT91_TIMER_Driver
         AT91_AIC_Driver::ForceInterrupt( AT91C_ID_TC0 + Timer );
     }
 
+#if defined(PLATFORM_ARM_SAM9X35_ANY)
+    static void SetCompare( UINT32 Timer, UINT32 Compare )
+#else
     static void SetCompare( UINT32 Timer, UINT16 Compare )
+#endif
     {
         ASSERT(Timer < AT91_MAX_TIMER);
         AT91_TC &TC = AT91::TIMER(Timer);
@@ -1881,7 +2558,11 @@ struct AT91_TIMER_Driver
         TC.TC_RC = Compare;
     }
 
+#if defined(PLATFORM_ARM_SAM9X35_ANY)
+    static UINT32 ReadCounter( UINT32 Timer )
+#else
     static UINT16 ReadCounter( UINT32 Timer )
+#endif
     {
         ASSERT(Timer < AT91_MAX_TIMER);
         AT91_TC &TC = AT91::TIMER(Timer);
