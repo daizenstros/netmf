@@ -981,10 +981,12 @@ BOOL AT91_USBHS_Driver::ProtectPins( int Controller, BOOL On )
                     pMatrix->MATRIX_USBPCR |= AT91C_MATRIX_USBPCR_PUON;
                 #endif
                 
+                #if defined(AT91_VBUS_DETECTION)
                 if(CPU_GPIO_GetPinState (AT91_VBUS))
                 {
                     VBus_ISR(0, TRUE, NULL);
                 }
+                #endif
 
             }
         }
