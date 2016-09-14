@@ -23,8 +23,11 @@ namespace Microsoft.SPOT.Tasks
 
         public MetaDataProcessor()
         {
-            m_bag = new Hashtable();
+            var debugTasks = Environment.GetEnvironmentVariable( "MSBUILD_DEBUG_TASKS" );
+            if( !string.IsNullOrWhiteSpace( debugTasks ) && debugTasks.Contains( GetType().FullName ) )
+                System.Diagnostics.Debugger.Launch( );
 
+            m_bag = new Hashtable( );
             this.LegacySkeletonInterop = false;
         }
 
@@ -293,13 +296,13 @@ namespace Microsoft.SPOT.Tasks
 
                 if (!File.Exists(filenameMDP))
                 {
-                    string path = Path.Combine(Environment.GetEnvironmentVariable("ProgramFiles"), @"Reference Assemblies\Microsoft\Framework\.NETMicroFramework");
+                    string path = Path.Combine( Environment.GetEnvironmentVariable( "ProgramFiles" ), @"Microsoft .NET Micro Framework" );
 
                     if(Directory.Exists(path))
                     {
                         string ver = m_bag.ContainsKey("TargetFrameworkVersion") ? (string)m_bag["TargetFrameworkVersion"] : "v4.3";
 
-                        filenameMDP = Path.Combine(Path.Combine( path, ver ), "MetaDataProcessor.exe");
+                        filenameMDP = Path.Combine( Path.Combine( Path.Combine( path, ver ), "Tools"), "MetaDataProcessor.exe");
 
                         if(!File.Exists(filenameMDP))
                         {
